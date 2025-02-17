@@ -58,22 +58,20 @@ bool SetCurrentPoiDoneSkill::start(int argc, char*argv[])
 	std::cout << "SetCurrentPoiDoneSkill::start";
 
     
-	m_tickService = m_node->create_service<bt_interfaces::srv::TickAction>(m_name + "Skill/tick",
+	m_tickService = m_node->create_service<bt_interfaces_dummy::srv::TickAction>(m_name + "Skill/tick",
                                                                            	std::bind(&SetCurrentPoiDoneSkill::tick,
                                                                            	this,
                                                                            	std::placeholders::_1,
                                                                            	std::placeholders::_2));
     
-	m_haltService = m_node->create_service<bt_interfaces::srv::HaltAction>(m_name + "Skill/halt",
-                                                                            	std::bind(&SetCurrentPoiDoneSkill::halt,
-                                                                            	this,
-                                                                            	std::placeholders::_1,
-                                                                            	std::placeholders::_2));
+
+    
+
     
     m_stateMachine.connectToEvent("SchedulerComponent.GetCurrentPoi.Call", [this]([[maybe_unused]]const QScxmlEvent & event){
         std::shared_ptr<rclcpp::Node> nodeGetCurrentPoi = rclcpp::Node::make_shared(m_name + "SkillNodeGetCurrentPoi");
-        std::shared_ptr<rclcpp::Client<scheduler_interfaces::srv::GetCurrentPoi>> clientGetCurrentPoi = nodeGetCurrentPoi->create_client<scheduler_interfaces::srv::GetCurrentPoi>("/SchedulerComponent/GetCurrentPoi");
-        auto request = std::make_shared<scheduler_interfaces::srv::GetCurrentPoi::Request>();
+        std::shared_ptr<rclcpp::Client<scheduler_interfaces_dummy::srv::GetCurrentPoi>> clientGetCurrentPoi = nodeGetCurrentPoi->create_client<scheduler_interfaces_dummy::srv::GetCurrentPoi>("/SchedulerComponent/GetCurrentPoi");
+        auto request = std::make_shared<scheduler_interfaces_dummy::srv::GetCurrentPoi::Request>();
         auto eventParams = event.data().toMap();
         
         bool wait_succeded{true};
@@ -100,9 +98,9 @@ bool SetCurrentPoiDoneSkill::start(int argc, char*argv[])
                auto response = result.get();
                if( response->is_ok ==true) {
                    QVariantMap data;
-                   data.insert("result", "SUCCESS");
+                   data.insert("is_ok", true);
                    data.insert("poi_number", response->poi_number);
-                   data.insert("poi_name", response->poi_name.c_str());
+                //    data.insert("poi_name", response->poi_name);
                    m_stateMachine.submitEvent("SchedulerComponent.GetCurrentPoi.Return", data);
                    RCLCPP_INFO(rclcpp::get_logger("rclcpp"), "SchedulerComponent.GetCurrentPoi.Return");
                    return;
@@ -113,14 +111,14 @@ bool SetCurrentPoiDoneSkill::start(int argc, char*argv[])
            }
         }
        QVariantMap data;
-       data.insert("result", "FAILURE");
+       data.insert("is_ok", false);
        m_stateMachine.submitEvent("SchedulerComponent.GetCurrentPoi.Return", data);
        RCLCPP_INFO(rclcpp::get_logger("rclcpp"), "SchedulerComponent.GetCurrentPoi.Return");
     });
     m_stateMachine.connectToEvent("BlackboardComponent.SetInt.Call", [this]([[maybe_unused]]const QScxmlEvent & event){
         std::shared_ptr<rclcpp::Node> nodeSetInt = rclcpp::Node::make_shared(m_name + "SkillNodeSetInt");
-        std::shared_ptr<rclcpp::Client<blackboard_interfaces::srv::SetIntBlackboard>> clientSetInt = nodeSetInt->create_client<blackboard_interfaces::srv::SetIntBlackboard>("/BlackboardComponent/SetInt");
-        auto request = std::make_shared<blackboard_interfaces::srv::SetIntBlackboard::Request>();
+        std::shared_ptr<rclcpp::Client<blackboard_interfaces_dummy::srv::SetIntBlackboard>> clientSetInt = nodeSetInt->create_client<blackboard_interfaces_dummy::srv::SetIntBlackboard>("/BlackboardComponent/SetInt");
+        auto request = std::make_shared<blackboard_interfaces_dummy::srv::SetIntBlackboard::Request>();
         auto eventParams = event.data().toMap();
         
         request->value = convert<decltype(request->value)>(eventParams["value"].toString().toStdString());
@@ -149,7 +147,7 @@ bool SetCurrentPoiDoneSkill::start(int argc, char*argv[])
                auto response = result.get();
                if( response->is_ok ==true) {
                    QVariantMap data;
-                   data.insert("result", "SUCCESS");
+                   data.insert("is_ok", true);
                    m_stateMachine.submitEvent("BlackboardComponent.SetInt.Return", data);
                    RCLCPP_INFO(rclcpp::get_logger("rclcpp"), "BlackboardComponent.SetInt.Return");
                    return;
@@ -160,32 +158,28 @@ bool SetCurrentPoiDoneSkill::start(int argc, char*argv[])
            }
         }
        QVariantMap data;
-       data.insert("result", "FAILURE");
+       data.insert("is_ok", false);
        m_stateMachine.submitEvent("BlackboardComponent.SetInt.Return", data);
        RCLCPP_INFO(rclcpp::get_logger("rclcpp"), "BlackboardComponent.SetInt.Return");
     });
     
 	m_stateMachine.connectToEvent("TICK_RESPONSE", [this]([[maybe_unused]]const QScxmlEvent & event){
-		RCLCPP_INFO(m_node->get_logger(), "SetCurrentPoiDoneSkill::tickReturn %s", event.data().toMap()["result"].toString().toStdString().c_str());
-		std::string result = event.data().toMap()["result"].toString().toStdString();
-		if (result == "SUCCESS" )
+		RCLCPP_INFO(m_node->get_logger(), "SetCurrentPoiDoneSkill::tickReturn %s", event.data().toMap()["status"].toString().toStdString().c_str());
+		std::string result = event.data().toMap()["status"].toString().toStdString();
+		if (result == std::to_string(SKILL_SUCCESS) )
 		{
 			m_tickResult.store(Status::success);
 		}
-		else if (result == "RUNNING" )
+		else if (result == std::to_string(SKILL_RUNNING) )
 		{
 			m_tickResult.store(Status::running);
 		}
-		else if (result == "FAILURE" )
+		else if (result == std::to_string(SKILL_FAILURE) )
 		{ 
 			m_tickResult.store(Status::failure);
 		}
 	});
     
-	m_stateMachine.connectToEvent("HALT_RESPONSE", [this]([[maybe_unused]]const QScxmlEvent & event){
-		RCLCPP_INFO(m_node->get_logger(), "SetCurrentPoiDoneSkill::haltresponse");
-		m_haltResult.store(true);
-	});
 
 	m_stateMachine.start();
 	m_threadSpin = std::make_shared<std::thread>(spin, m_node);
@@ -193,12 +187,11 @@ bool SetCurrentPoiDoneSkill::start(int argc, char*argv[])
 	return true;
 }
 
-void SetCurrentPoiDoneSkill::tick( [[maybe_unused]] const std::shared_ptr<bt_interfaces::srv::TickAction::Request> request,
-                                std::shared_ptr<bt_interfaces::srv::TickAction::Response>      response)
+void SetCurrentPoiDoneSkill::tick( [[maybe_unused]] const std::shared_ptr<bt_interfaces_dummy::srv::TickAction::Request> request,
+                                std::shared_ptr<bt_interfaces_dummy::srv::TickAction::Response>      response)
 {
     std::lock_guard<std::mutex> lock(m_requestMutex);
     RCLCPP_INFO(m_node->get_logger(), "SetCurrentPoiDoneSkill::tick");
-    auto message = bt_interfaces::msg::ActionResponse();
     m_tickResult.store(Status::undefined);
     m_stateMachine.submitEvent("CMD_TICK");
    
@@ -208,29 +201,18 @@ void SetCurrentPoiDoneSkill::tick( [[maybe_unused]] const std::shared_ptr<bt_int
     switch(m_tickResult.load()) 
     {
         case Status::running:
-            response->status.status = message.SKILL_RUNNING;
+            response->status = SKILL_RUNNING;
             break;
         case Status::failure:
-            response->status.status = message.SKILL_FAILURE;
+            response->status = SKILL_FAILURE;
             break;
         case Status::success:
-            response->status.status = message.SKILL_SUCCESS;
+            response->status = SKILL_SUCCESS;
             break;            
     }
     RCLCPP_INFO(m_node->get_logger(), "SetCurrentPoiDoneSkill::tickDone");
     response->is_ok = true;
 }
 
-void SetCurrentPoiDoneSkill::halt( [[maybe_unused]] const std::shared_ptr<bt_interfaces::srv::HaltAction::Request> request,
-    [[maybe_unused]] std::shared_ptr<bt_interfaces::srv::HaltAction::Response> response)
-{
-    std::lock_guard<std::mutex> lock(m_requestMutex);
-    RCLCPP_INFO(m_node->get_logger(), "SetCurrentPoiDoneSkill::halt");
-    m_haltResult.store(false);
-    m_stateMachine.submitEvent("CMD_HALT");
-    while(!m_haltResult.load()) {
-        std::this_thread::sleep_for (std::chrono::milliseconds(100));
-    }
-    RCLCPP_INFO(m_node->get_logger(), "SetCurrentPoiDoneSkill::haltDone");
-    response->is_ok = true;
-}
+
+

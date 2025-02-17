@@ -65,27 +65,27 @@ bool GoToPoiActionSkill::start(int argc, char*argv[])
 	RCLCPP_DEBUG_STREAM(m_node->get_logger(), "GoToPoiActionSkill::start");
 	std::cout << "GoToPoiActionSkill::start";
 
-	m_tickService = m_node->create_service<bt_interfaces::srv::TickAction>(m_name + "Skill/tick",
+	m_tickService = m_node->create_service<bt_interfaces_dummy::srv::TickAction>(m_name + "Skill/tick",
                                                                            	std::bind(&GoToPoiActionSkill::tick,
                                                                            	this,
                                                                            	std::placeholders::_1,
                                                                            	std::placeholders::_2));
 
-	m_haltService = m_node->create_service<bt_interfaces::srv::HaltAction>(m_name + "Skill/halt",
+	m_haltService = m_node->create_service<bt_interfaces_dummy::srv::HaltAction>(m_name + "Skill/halt",
                                                                             	std::bind(&GoToPoiActionSkill::halt,
                                                                             	this,
                                                                             	std::placeholders::_1,
                                                                             	std::placeholders::_2));
   
-m_actionClient = rclcpp_action::create_client<navigation_interfaces::action::GoToPoi>(m_node, "/NavigationComponent/GoToPoi");
+m_actionClient = rclcpp_action::create_client<navigation_interfaces_dummy::action::GoToPoi>(m_node, "/NavigationComponent/GoToPoi");
 m_send_goal_options.goal_response_callback = std::bind(&GoToPoiActionSkill::goal_response_callback, this, std::placeholders::_1);
 m_send_goal_options.feedback_callback =   std::bind(&GoToPoiActionSkill::feedback_callback, this, std::placeholders::_1, std::placeholders::_2);
 m_send_goal_options.result_callback =  std::bind(&GoToPoiActionSkill::result_callback, this, std::placeholders::_1);
 
 m_stateMachine.connectToEvent("SchedulerComponent.GetCurrentPoi.Call", [this]([[maybe_unused]]const QScxmlEvent & event){
         std::shared_ptr<rclcpp::Node> nodeGetCurrentPoi = rclcpp::Node::make_shared(m_name + "SkillNodeGetCurrentPoi");
-        std::shared_ptr<rclcpp::Client<scheduler_interfaces::srv::GetCurrentPoi>> clientGetCurrentPoi = nodeGetCurrentPoi->create_client<scheduler_interfaces::srv::GetCurrentPoi>("/SchedulerComponent/GetCurrentPoi");
-        auto request = std::make_shared<scheduler_interfaces::srv::GetCurrentPoi::Request>();
+        std::shared_ptr<rclcpp::Client<scheduler_interfaces_dummy::srv::GetCurrentPoi>> clientGetCurrentPoi = nodeGetCurrentPoi->create_client<scheduler_interfaces_dummy::srv::GetCurrentPoi>("/SchedulerComponent/GetCurrentPoi");
+        auto request = std::make_shared<scheduler_interfaces_dummy::srv::GetCurrentPoi::Request>();
         bool wait_succeded{true};
         while (!clientGetCurrentPoi->wait_for_service(std::chrono::seconds(1))) {
             if (!rclcpp::ok()) {
@@ -103,13 +103,13 @@ m_stateMachine.connectToEvent("SchedulerComponent.GetCurrentPoi.Call", [this]([[
             {
                 if( response->is_ok ==true) {
                     QVariantMap data;
-                    data.insert("result", "SUCCESS");
-                    data.insert("poi_name", response->poi_name.c_str());
+                    data.insert("is_ok", true);
+                    data.insert("poi_number", response->poi_number);
                     m_stateMachine.submitEvent("SchedulerComponent.GetCurrentPoi.Return", data);
                     RCLCPP_INFO(rclcpp::get_logger("rclcpp"), "SchedulerComponent.GetCurrentPoi.Return");
                 } else {
                     QVariantMap data;
-                    data.insert("result", "FAILURE");
+                    data.insert("is_ok", false);
                     m_stateMachine.submitEvent("SchedulerComponent.GetCurrentPoi.Return", data);
                     RCLCPP_INFO(rclcpp::get_logger("rclcpp"), "SchedulerComponent.GetCurrentPoi.Return");
                 }
@@ -122,23 +122,22 @@ m_stateMachine.connectToEvent("NavigationComponent.GoToPoi.SendGoal", [this]([[m
       RCLCPP_INFO(m_node->get_logger(), "calling send goal");
       // m_actionClient->async_cancel_all_goals(); //No longer necessary since the action server is now preemptable
       std::shared_ptr<rclcpp::Node> nodeGoToPoi = rclcpp::Node::make_shared(m_name + "SkillNodeGoToPoi");
-      rclcpp_action::Client<navigation_interfaces::action::GoToPoi>::SharedPtr clientGoToPoi  =
-      rclcpp_action::create_client<navigation_interfaces::action::GoToPoi>(nodeGoToPoi, "/NavigationComponent/GoToPoi");
-      std::string poi_name = event.data().toMap()["poi_name"].toString().toStdString();
-      // auto goal = std::make_shared<navigation_interfaces::action::GoToPoi::Goal>();
+      rclcpp_action::Client<navigation_interfaces_dummy::action::GoToPoi>::SharedPtr clientGoToPoi  =
+      rclcpp_action::create_client<navigation_interfaces_dummy::action::GoToPoi>(nodeGoToPoi, "/NavigationComponent/GoToPoi");
+      int poi_number = event.data().toMap()["poi_number"].toInt();
+      // auto goal = std::make_shared<navigation_interfaces_dummy::action::GoToPoi::Goal>();
       // bool wait_succeded{true};
       // int retries = 0;
-      RCLCPP_INFO(m_node->get_logger(), "calling send goal");
-      send_goal(poi_name);
+      send_goal(poi_number);
       RCLCPP_INFO(m_node->get_logger(), "done send goal");
   });
 
 m_stateMachine.connectToEvent("NavigationComponent.GoToPoi.ResultRequest", [this]([[maybe_unused]]const QScxmlEvent & event){
       RCLCPP_INFO(m_node->get_logger(), "GoToPoiActionSkill::NavigationComponent.GoToPoi.ResultRequest");
       std::shared_ptr<rclcpp::Node> nodeGoToPoi = rclcpp::Node::make_shared(m_name + "SkillNodeGoToPoi");
-      rclcpp_action::Client<navigation_interfaces::action::GoToPoi>::SharedPtr clientGoToPoi  =
-      rclcpp_action::create_client<navigation_interfaces::action::GoToPoi>(nodeGoToPoi, "/NavigationComponent/GoToPoi");
-      // auto goal = std::make_shared<navigation_interfaces::action::GoToPoi::Goal>();
+      rclcpp_action::Client<navigation_interfaces_dummy::action::GoToPoi>::SharedPtr clientGoToPoi  =
+        rclcpp_action::create_client<navigation_interfaces_dummy::action::GoToPoi>(nodeGoToPoi, "/NavigationComponent/GoToPoi");
+      // auto goal = std::make_shared<navigation_interfaces_dummy::action::GoToPoi::Goal>();
       // bool wait_succeded{true};
       // int retries = 0;
       RCLCPP_INFO(m_node->get_logger(), "result request");
@@ -156,17 +155,17 @@ m_stateMachine.connectToEvent("NavigationComponent.GoToPoi.Feedback", [this]([[m
   });
 
 	m_stateMachine.connectToEvent("TICK_RESPONSE", [this]([[maybe_unused]]const QScxmlEvent & event){
-		RCLCPP_INFO(m_node->get_logger(), "GoToPoiActionSkill::tickReturn %s", event.data().toMap()["result"].toString().toStdString().c_str());
-		std::string result = event.data().toMap()["result"].toString().toStdString();
-		if (result == "SUCCESS" )
+		RCLCPP_INFO(m_node->get_logger(), "GoToPoiActionSkill::tickReturn %s", event.data().toMap()["status"].toString().toStdString().c_str());
+		std::string result = event.data().toMap()["status"].toString().toStdString();
+		if (result == std::to_string(SKILL_SUCCESS) )
 		{
 			m_tickResult.store(Status::success);
 		}
-		else if (result == "RUNNING" )
+		else if (result == std::to_string(SKILL_RUNNING) )
 		{
 			m_tickResult.store(Status::running);
 		}
-		else if (result == "FAILURE" )
+		else if (result == std::to_string(SKILL_FAILURE) )
 		{ 
 			m_tickResult.store(Status::failure);
 		}
@@ -175,8 +174,8 @@ m_stateMachine.connectToEvent("NavigationComponent.GoToPoi.Feedback", [this]([[m
 
   m_stateMachine.connectToEvent("BlackboardComponent.SetInt.Call", [this]([[maybe_unused]]const QScxmlEvent & event){
       std::shared_ptr<rclcpp::Node> nodeSetInt = rclcpp::Node::make_shared(m_name + "SkillNodeSetInt");
-      std::shared_ptr<rclcpp::Client<blackboard_interfaces::srv::SetIntBlackboard>> clientSetInt = nodeSetInt->create_client<blackboard_interfaces::srv::SetIntBlackboard>("/BlackboardComponent/SetInt");
-      auto request = std::make_shared<blackboard_interfaces::srv::SetIntBlackboard::Request>();
+      std::shared_ptr<rclcpp::Client<blackboard_interfaces_dummy::srv::SetIntBlackboard>> clientSetInt = nodeSetInt->create_client<blackboard_interfaces_dummy::srv::SetIntBlackboard>("/BlackboardComponent/SetInt");
+      auto request = std::make_shared<blackboard_interfaces_dummy::srv::SetIntBlackboard::Request>();
       auto eventParams = event.data().toMap();
       request->field_name = convert<decltype(request->field_name)>(eventParams["field_name"].toString().toStdString());
       request->value = convert<decltype(request->value)>(eventParams["value"].toString().toStdString());
@@ -197,12 +196,12 @@ m_stateMachine.connectToEvent("NavigationComponent.GoToPoi.Feedback", [this]([[m
           {
               if( response->is_ok ==true) {
                   QVariantMap data;
-                  data.insert("result", "SUCCESS");
+                  data.insert("is_ok", true);
                   m_stateMachine.submitEvent("BlackboardComponent.SetInt.Return", data);
                   RCLCPP_INFO(rclcpp::get_logger("rclcpp"), "BlackboardComponent.SetInt.Return");
               } else {
                   QVariantMap data;
-                  data.insert("result", "FAILURE");
+                  data.insert("is_ok", false);
                   m_stateMachine.submitEvent("BlackboardComponent.SetInt.Return", data);
                   RCLCPP_INFO(rclcpp::get_logger("rclcpp"), "BlackboardComponent.SetInt.Return");
               }
@@ -222,12 +221,12 @@ m_stateMachine.connectToEvent("NavigationComponent.GoToPoi.Feedback", [this]([[m
 	return true;
 }
 
-void GoToPoiActionSkill::tick( [[maybe_unused]] const std::shared_ptr<bt_interfaces::srv::TickAction::Request> request,
-                                std::shared_ptr<bt_interfaces::srv::TickAction::Response>      response)
+void GoToPoiActionSkill::tick( [[maybe_unused]] const std::shared_ptr<bt_interfaces_dummy::srv::TickAction::Request> request,
+                                std::shared_ptr<bt_interfaces_dummy::srv::TickAction::Response>      response)
 {
     std::lock_guard<std::mutex> lock(m_requestMutex);
     RCLCPP_INFO(m_node->get_logger(), "GoToPoiActionSkill::tick");
-    auto message = bt_interfaces::msg::ActionResponse();
+    auto message = bt_interfaces_dummy::msg::ActionResponse();
     m_tickResult.store(Status::undefined); //here we can put a struct
     m_stateMachine.submitEvent("CMD_TICK");
    
@@ -239,13 +238,13 @@ void GoToPoiActionSkill::tick( [[maybe_unused]] const std::shared_ptr<bt_interfa
     switch(m_tickResult.load()) 
     {
         case Status::running:
-            response->status.status = message.SKILL_RUNNING;
+            response->status = SKILL_RUNNING;
             break;
         case Status::failure:
-            response->status.status = message.SKILL_FAILURE;
+            response->status = SKILL_FAILURE;
             break;
         case Status::success:
-            response->status.status = message.SKILL_SUCCESS;
+            response->status = SKILL_SUCCESS;
             break;            
     }
     RCLCPP_INFO(m_node->get_logger(), "GoToPoiActionSkill::tickDone");
@@ -253,13 +252,14 @@ void GoToPoiActionSkill::tick( [[maybe_unused]] const std::shared_ptr<bt_interfa
     response->is_ok = true;
 }
 
-void GoToPoiActionSkill::halt( [[maybe_unused]] const std::shared_ptr<bt_interfaces::srv::HaltAction::Request> request,
-    [[maybe_unused]] std::shared_ptr<bt_interfaces::srv::HaltAction::Response> response)
+void GoToPoiActionSkill::halt( [[maybe_unused]] const std::shared_ptr<bt_interfaces_dummy::srv::HaltAction::Request> request,
+    [[maybe_unused]] std::shared_ptr<bt_interfaces_dummy::srv::HaltAction::Response> response)
 {
     std::lock_guard<std::mutex> lock(m_requestMutex);
     RCLCPP_INFO(m_node->get_logger(), "GoToPoiActionSkill::halt");
-    m_haltResult.store(false); //here we can put a struct
-    m_stateMachine.submitEvent("CMD_HALT");
+    // m_haltResult.store(false); //here we can put a struct
+    m_haltResult.store(true);
+    // m_stateMachine.submitEvent("CMD_HALT");
    
     while(!m_haltResult.load()) 
     {
@@ -271,7 +271,7 @@ void GoToPoiActionSkill::halt( [[maybe_unused]] const std::shared_ptr<bt_interfa
     response->is_ok = true;
 }
 
-void GoToPoiActionSkill::send_goal(std::string poi_name)
+void GoToPoiActionSkill::send_goal(int poi_number)
   {
     using namespace std::placeholders;
     bool wait_succeded{true};
@@ -288,33 +288,33 @@ void GoToPoiActionSkill::send_goal(std::string poi_name)
         RCLCPP_ERROR(rclcpp::get_logger("rclcpp"), "Timed out while waiting for the service 'GoToPoi'.");
         wait_succeded = false;
         QVariantMap data;
-        data.insert("result", "FAILURE");
+        data.insert("is_ok", false);
         m_stateMachine.submitEvent("NavigationComponent.GoToPoi.GoalResponse", data);
         break;
       }
     }
   if (wait_succeded) {
-      auto goal_msg = navigation_interfaces::action::GoToPoi::Goal();
+      auto goal_msg = navigation_interfaces_dummy::action::GoToPoi::Goal();
       RCLCPP_INFO(m_node->get_logger(), "Sending goal");
-      goal_msg.poi_name = poi_name;
+      goal_msg.poi_number = poi_number;
       m_actionClient->async_send_goal(goal_msg, m_send_goal_options);
       QVariantMap data;
-      data.insert("result", "SUCCESS");
+      data.insert("is_ok", true);
       m_stateMachine.submitEvent("NavigationComponent.GoToPoi.GoalResponse", data);
     }
   }
 
-void GoToPoiActionSkill::goal_response_callback(const rclcpp_action::ClientGoalHandle<navigation_interfaces::action::GoToPoi>::SharedPtr & goal_handle)
+void GoToPoiActionSkill::goal_response_callback(const rclcpp_action::ClientGoalHandle<navigation_interfaces_dummy::action::GoToPoi>::SharedPtr & goal_handle)
 {
   std::cout << "Provaa" << std::endl;
   QVariantMap data;
   if (!goal_handle) {
-    data.insert("result", "FAILURE");
+    data.insert("is_ok", false);
     m_stateMachine.submitEvent("NavigationComponent.GoToPoi.GoalResponse", data);
     RCLCPP_INFO(rclcpp::get_logger("rclcpp"), "NavigationComponent.GoToPoi.GoalResponse Failure");
     RCLCPP_ERROR(m_node->get_logger(), "Goal was rejected by server");
   } else {
-    data.insert("result", "SUCCESS");
+    data.insert("is_ok", true);
     m_stateMachine.submitEvent("NavigationComponent.GoToPoi.GoalResponse", data);
     RCLCPP_INFO(rclcpp::get_logger("rclcpp"), "NavigationComponent.GoToPoi.GoalResponse Success");
     RCLCPP_INFO(m_node->get_logger(), "Goal accepted by server, waiting for result");
@@ -322,14 +322,14 @@ void GoToPoiActionSkill::goal_response_callback(const rclcpp_action::ClientGoalH
 }
 
 void GoToPoiActionSkill::feedback_callback(
-    rclcpp_action::ClientGoalHandle<navigation_interfaces::action::GoToPoi>::SharedPtr,
-  const std::shared_ptr<const navigation_interfaces::action::GoToPoi::Feedback> feedback)
+    rclcpp_action::ClientGoalHandle<navigation_interfaces_dummy::action::GoToPoi>::SharedPtr,
+  const std::shared_ptr<const navigation_interfaces_dummy::action::GoToPoi::Feedback> feedback)
 {
-  m_status = feedback->status.status;
+  m_status = feedback->status;
   std::cout << "Status " << m_status << std::endl;
 }
 
-void GoToPoiActionSkill::result_callback(const  rclcpp_action::ClientGoalHandle<navigation_interfaces::action::GoToPoi>::WrappedResult & result)
+void GoToPoiActionSkill::result_callback(const  rclcpp_action::ClientGoalHandle<navigation_interfaces_dummy::action::GoToPoi>::WrappedResult & result)
 {
   switch (result.code) {
     case rclcpp_action::ResultCode::SUCCEEDED:

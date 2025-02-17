@@ -15,7 +15,7 @@ RUN /bin/bash -c "git clone --recurse-submodules https://github.com/BehaviorTree
     cmake --build build"
 
 ENV Qt6_DIR=/home/user1/Qt6.6.3/lib/cmake
-ARG UC3_BRANCH=main
+ARG UC3_BRANCH=dev/IROS2025
 
 RUN /bin/bash -c "echo 'updated on 202406271144' && \
     source /opt/ros/iron/setup.bash && \

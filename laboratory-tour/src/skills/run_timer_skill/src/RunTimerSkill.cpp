@@ -58,22 +58,20 @@ bool RunTimerSkill::start(int argc, char*argv[])
 	std::cout << "RunTimerSkill::start";
 
     
-	m_tickService = m_node->create_service<bt_interfaces::srv::TickAction>(m_name + "Skill/tick",
+	m_tickService = m_node->create_service<bt_interfaces_dummy::srv::TickAction>(m_name + "Skill/tick",
                                                                            	std::bind(&RunTimerSkill::tick,
                                                                            	this,
                                                                            	std::placeholders::_1,
                                                                            	std::placeholders::_2));
     
-	m_haltService = m_node->create_service<bt_interfaces::srv::HaltAction>(m_name + "Skill/halt",
-                                                                            	std::bind(&RunTimerSkill::halt,
-                                                                            	this,
-                                                                            	std::placeholders::_1,
-                                                                            	std::placeholders::_2));
+
     
-    m_stateMachine.connectToEvent("TimerCheckForPeopleComponent.StartTimer.Call", [this]([[maybe_unused]]const QScxmlEvent & event){
+
+    
+    m_stateMachine.connectToEvent("TimerComponent.StartTimer.Call", [this]([[maybe_unused]]const QScxmlEvent & event){
         std::shared_ptr<rclcpp::Node> nodeStartTimer = rclcpp::Node::make_shared(m_name + "SkillNodeStartTimer");
-        std::shared_ptr<rclcpp::Client<timer_check_for_people_interfaces::srv::StartTimer>> clientStartTimer = nodeStartTimer->create_client<timer_check_for_people_interfaces::srv::StartTimer>("/TimerCheckForPeopleComponent/StartTimer");
-        auto request = std::make_shared<timer_check_for_people_interfaces::srv::StartTimer::Request>();
+        std::shared_ptr<rclcpp::Client<timer_interfaces_dummy::srv::StartTimer>> clientStartTimer = nodeStartTimer->create_client<timer_interfaces_dummy::srv::StartTimer>("/TimerComponent/StartTimer");
+        auto request = std::make_shared<timer_interfaces_dummy::srv::StartTimer::Request>();
         auto eventParams = event.data().toMap();
         
         bool wait_succeded{true};
@@ -100,9 +98,9 @@ bool RunTimerSkill::start(int argc, char*argv[])
                auto response = result.get();
                if( response->is_ok ==true) {
                    QVariantMap data;
-                   data.insert("result", "SUCCESS");
-                   m_stateMachine.submitEvent("TimerCheckForPeopleComponent.StartTimer.Return", data);
-                   RCLCPP_INFO(rclcpp::get_logger("rclcpp"), "TimerCheckForPeopleComponent.StartTimer.Return");
+                   data.insert("is_ok", true);
+                   m_stateMachine.submitEvent("TimerComponent.StartTimer.Return", data);
+                   RCLCPP_INFO(rclcpp::get_logger("rclcpp"), "TimerComponent.StartTimer.Return");
                    return;
                }
            }
@@ -111,14 +109,14 @@ bool RunTimerSkill::start(int argc, char*argv[])
            }
         }
        QVariantMap data;
-       data.insert("result", "FAILURE");
-       m_stateMachine.submitEvent("TimerCheckForPeopleComponent.StartTimer.Return", data);
-       RCLCPP_INFO(rclcpp::get_logger("rclcpp"), "TimerCheckForPeopleComponent.StartTimer.Return");
+       data.insert("is_ok", false);
+       m_stateMachine.submitEvent("TimerComponent.StartTimer.Return", data);
+       RCLCPP_INFO(rclcpp::get_logger("rclcpp"), "TimerComponent.StartTimer.Return");
     });
-    m_stateMachine.connectToEvent("TimerCheckForPeopleComponent.IsTimerActive.Call", [this]([[maybe_unused]]const QScxmlEvent & event){
+    m_stateMachine.connectToEvent("TimerComponent.IsTimerActive.Call", [this]([[maybe_unused]]const QScxmlEvent & event){
         std::shared_ptr<rclcpp::Node> nodeIsTimerActive = rclcpp::Node::make_shared(m_name + "SkillNodeIsTimerActive");
-        std::shared_ptr<rclcpp::Client<timer_check_for_people_interfaces::srv::IsTimerActive>> clientIsTimerActive = nodeIsTimerActive->create_client<timer_check_for_people_interfaces::srv::IsTimerActive>("/TimerCheckForPeopleComponent/IsTimerActive");
-        auto request = std::make_shared<timer_check_for_people_interfaces::srv::IsTimerActive::Request>();
+        std::shared_ptr<rclcpp::Client<timer_interfaces_dummy::srv::IsTimerActive>> clientIsTimerActive = nodeIsTimerActive->create_client<timer_interfaces_dummy::srv::IsTimerActive>("/TimerComponent/IsTimerActive");
+        auto request = std::make_shared<timer_interfaces_dummy::srv::IsTimerActive::Request>();
         auto eventParams = event.data().toMap();
         
         bool wait_succeded{true};
@@ -145,10 +143,10 @@ bool RunTimerSkill::start(int argc, char*argv[])
                auto response = result.get();
                if( response->is_ok ==true) {
                    QVariantMap data;
-                   data.insert("result", "SUCCESS");
+                   data.insert("is_ok", true);
                    data.insert("is_active", response->is_active);
-                   m_stateMachine.submitEvent("TimerCheckForPeopleComponent.IsTimerActive.Return", data);
-                   RCLCPP_INFO(rclcpp::get_logger("rclcpp"), "TimerCheckForPeopleComponent.IsTimerActive.Return");
+                   m_stateMachine.submitEvent("TimerComponent.IsTimerActive.Return", data);
+                   RCLCPP_INFO(rclcpp::get_logger("rclcpp"), "TimerComponent.IsTimerActive.Return");
                    return;
                }
            }
@@ -157,32 +155,28 @@ bool RunTimerSkill::start(int argc, char*argv[])
            }
         }
        QVariantMap data;
-       data.insert("result", "FAILURE");
-       m_stateMachine.submitEvent("TimerCheckForPeopleComponent.IsTimerActive.Return", data);
-       RCLCPP_INFO(rclcpp::get_logger("rclcpp"), "TimerCheckForPeopleComponent.IsTimerActive.Return");
+       data.insert("is_ok", false);
+       m_stateMachine.submitEvent("TimerComponent.IsTimerActive.Return", data);
+       RCLCPP_INFO(rclcpp::get_logger("rclcpp"), "TimerComponent.IsTimerActive.Return");
     });
     
 	m_stateMachine.connectToEvent("TICK_RESPONSE", [this]([[maybe_unused]]const QScxmlEvent & event){
-		RCLCPP_INFO(m_node->get_logger(), "RunTimerSkill::tickReturn %s", event.data().toMap()["result"].toString().toStdString().c_str());
-		std::string result = event.data().toMap()["result"].toString().toStdString();
-		if (result == "SUCCESS" )
+		RCLCPP_INFO(m_node->get_logger(), "RunTimerSkill::tickReturn %s", event.data().toMap()["status"].toString().toStdString().c_str());
+		std::string result = event.data().toMap()["status"].toString().toStdString();
+		if (result == std::to_string(SKILL_SUCCESS) )
 		{
 			m_tickResult.store(Status::success);
 		}
-		else if (result == "RUNNING" )
+		else if (result == std::to_string(SKILL_RUNNING) )
 		{
 			m_tickResult.store(Status::running);
 		}
-		else if (result == "FAILURE" )
+		else if (result == std::to_string(SKILL_FAILURE) )
 		{ 
 			m_tickResult.store(Status::failure);
 		}
 	});
     
-	m_stateMachine.connectToEvent("HALT_RESPONSE", [this]([[maybe_unused]]const QScxmlEvent & event){
-		RCLCPP_INFO(m_node->get_logger(), "RunTimerSkill::haltresponse");
-		m_haltResult.store(true);
-	});
 
 	m_stateMachine.start();
 	m_threadSpin = std::make_shared<std::thread>(spin, m_node);
@@ -190,12 +184,11 @@ bool RunTimerSkill::start(int argc, char*argv[])
 	return true;
 }
 
-void RunTimerSkill::tick( [[maybe_unused]] const std::shared_ptr<bt_interfaces::srv::TickAction::Request> request,
-                                std::shared_ptr<bt_interfaces::srv::TickAction::Response>      response)
+void RunTimerSkill::tick( [[maybe_unused]] const std::shared_ptr<bt_interfaces_dummy::srv::TickAction::Request> request,
+                                std::shared_ptr<bt_interfaces_dummy::srv::TickAction::Response>      response)
 {
     std::lock_guard<std::mutex> lock(m_requestMutex);
     RCLCPP_INFO(m_node->get_logger(), "RunTimerSkill::tick");
-    auto message = bt_interfaces::msg::ActionResponse();
     m_tickResult.store(Status::undefined);
     m_stateMachine.submitEvent("CMD_TICK");
    
@@ -205,29 +198,18 @@ void RunTimerSkill::tick( [[maybe_unused]] const std::shared_ptr<bt_interfaces::
     switch(m_tickResult.load()) 
     {
         case Status::running:
-            response->status.status = message.SKILL_RUNNING;
+            response->status = SKILL_RUNNING;
             break;
         case Status::failure:
-            response->status.status = message.SKILL_FAILURE;
+            response->status = SKILL_FAILURE;
             break;
         case Status::success:
-            response->status.status = message.SKILL_SUCCESS;
+            response->status = SKILL_SUCCESS;
             break;            
     }
     RCLCPP_INFO(m_node->get_logger(), "RunTimerSkill::tickDone");
     response->is_ok = true;
 }
 
-void RunTimerSkill::halt( [[maybe_unused]] const std::shared_ptr<bt_interfaces::srv::HaltAction::Request> request,
-    [[maybe_unused]] std::shared_ptr<bt_interfaces::srv::HaltAction::Response> response)
-{
-    std::lock_guard<std::mutex> lock(m_requestMutex);
-    RCLCPP_INFO(m_node->get_logger(), "RunTimerSkill::halt");
-    m_haltResult.store(false);
-    m_stateMachine.submitEvent("CMD_HALT");
-    while(!m_haltResult.load()) {
-        std::this_thread::sleep_for (std::chrono::milliseconds(100));
-    }
-    RCLCPP_INFO(m_node->get_logger(), "RunTimerSkill::haltDone");
-    response->is_ok = true;
-}
+
+

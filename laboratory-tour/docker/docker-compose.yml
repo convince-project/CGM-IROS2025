@@ -102,3 +102,31 @@ services:
     # networks:
     #   frontapp:
     #     ipv4_address: 172.17.0.15
+
+    run_components:
+    image: ste93/mbvm:simpar2025
+    <<: *base
+    container_name: run_components
+    command: bash -c "sleep 2; source /opt/ros/iron/setup.bash && \
+              source /usr/local/src/robot/yarp-devices-ros2/ros2_interfaces_ws/install/setup.bash && \
+              source /home/user1/MBVM-SIMPAR2025/code/install/setup.bash && \
+              yarp conf 172.17.0.1 10000; yarp wait $${YARP_NAMESPACE}; \
+              yarpmanager-console --application  /home/user1/MBVM-SIMPAR2025/code/launch/applications/convince_bt_components.xml --exit --run --connect"
+    depends_on:
+      - yarpserver
+      - yarprun
+      - yarplogger
+
+  run_skills:
+    image: ste93/mbvm:simpar2025
+    <<: *base
+    container_name: run_skills
+    command: bash -c "sleep 2; source /opt/ros/iron/setup.bash && \
+              source /usr/local/src/robot/yarp-devices-ros2/ros2_interfaces_ws/install/setup.bash && \
+              source /home/user1/MBVM-SIMPAR2025/code/install/setup.bash && \
+              yarp conf 172.17.0.1 10000; yarp wait $${YARP_NAMESPACE}; \
+              yarpmanager-console --application  /home/user1/MBVM-SIMPAR2025/code/launch/applications/convince_bt_skills.xml --exit --run --connect"
+    depends_on:
+      - yarpserver
+      - yarprun
+      - yarplogger
