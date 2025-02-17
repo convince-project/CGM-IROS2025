@@ -16,7 +16,7 @@
 #include <yarp/dev/INavigation2D.h>
 #include <rclcpp_action/rclcpp_action.hpp>
 #include <navigation_interfaces_dummy/msg/navigation_status.hpp>
-#include <navigation_interfaces_dummy/action/go_to_poi_action.hpp>
+#include <navigation_interfaces_dummy/action/go_to_poi.hpp>
 
 
 class NavigationComponent 
