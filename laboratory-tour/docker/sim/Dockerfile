@@ -97,7 +97,7 @@ RUN echo "export PATH=\$PATH:/home/user1/Groot/build" >> ~/.bashrc
 RUN /bin/bash -c "echo 'updated on 202502071145' && \
     source /opt/ros/iron/setup.bash && \
     cd /home/user1 && \
-    git clone https://github.com/convince-project/UC3.git -b  dev/poi-scheduler-rebased && \
+    git clone https://github.com/convince-project/UC3.git -b  dev/IROS2025 && \
     source /opt/ros/iron/setup.bash && \
     cd /home/user1/UC3/laboratory-tour/ && \
     colcon build --packages-ignore face_expressions_wrapper dialog_component"
