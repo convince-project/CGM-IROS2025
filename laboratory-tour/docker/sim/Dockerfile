@@ -20,6 +20,7 @@ RUN /bin/bash -c "git clone --recurse-submodules https://github.com/BehaviorTree
     cmake --build build && \
     cmake --install build"
 
+RUN pip install reelay websocket-client jedi prompt_toolkit
 
 RUN /bin/bash -c "git clone --recurse-submodules https://github.com/BehaviorTree/Groot.git && \
     cd Groot && \
