@@ -15,7 +15,7 @@
 #include <bt_interfaces_dummy/msg/action_response.hpp>
 #include <scheduler_interfaces_dummy/srv/get_current_poi.hpp>
 #include <blackboard_interfaces_dummy/srv/set_int_blackboard.hpp>
-#include <navigation_interfaces_dummy/action/go_to_poi.hpp>
+#include <navigation_interfaces_dummy/action/go_to_poi_action.hpp>
 #include <bt_interfaces_dummy/srv/tick_action.hpp>
 #include <bt_interfaces_dummy/srv/halt_action.hpp>
 
