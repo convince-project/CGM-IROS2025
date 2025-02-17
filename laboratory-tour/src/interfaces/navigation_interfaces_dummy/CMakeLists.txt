@@ -17,7 +17,7 @@ find_package(sensor_msgs REQUIRED)
 find_package(rosidl_default_generators REQUIRED)
 rosidl_generate_interfaces(navigation_interfaces
 "msg/NavigationStatus.msg"
-"action/GoToPoiAction.action"
+"action/GoToPoi.action"
 DEPENDENCIES sensor_msgs
 LIBRARY_NAME navigation_interfaces_dummy 
 )
