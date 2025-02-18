@@ -71,9 +71,16 @@ services:
     image: ste93/convince:qt_6.7.3_ubuntu22.04_iron_stable_sim_completed
     <<: *base
     container_name: gazebo
-    command: bash -c "yarp conf 172.17.0.1 10000; yarp wait $${YARP_NAMESPACE}; source /opt/ros/iron/setup.bash; ros2 launch gazebo_ros gazebo.launch.py world:=/usr/local/src/robot/tour-guide-robot/app/maps/SIM_GAM/GAM.world"
+    command: bash -c "source /opt/ros/iron/setup.bash && \
+              source /usr/local/src/robot/yarp-devices-ros2/ros2_interfaces_ws/install/setup.bash && \
+              source $${UC3_DIR}/install/setup.bash && \
+              yarp conf 172.17.0.1 10000; yarp wait $${YARP_NAMESPACE}; \
+              cd /usr/local/src/robot/tour-guide-robot/app/maps/SIM_GAM/ && \
+              export GAZEBO_MODEL_PATH=/usr/local/src/robot/cer-sim/gazebo/ && \
+              ros2 launch gazebo_ros gazebo.launch.py extra_gazebo_args:=-slibgazebo_yarp_clock.so world:=/usr/local/src/robot/tour-guide-robot/app/maps/SIM_GAM/GAM.world"
     depends_on:
       - yarpserver
+      - rosclock
 
   yarpmanager:
     image: ste93/convince:qt_6.7.3_ubuntu22.04_iron_stable_sim_completed
@@ -137,7 +144,7 @@ services:
     image: ste93/convince:qt_6.7.3_ubuntu22.04_iron_stable_sim_completed
     <<: *base
     container_name: yarprun
-    command: bash -c "export LD_LIBRARY_PATH=${LD_LIBRARY_PATH}:/usr/local/src/robot/yarp/build/lib/:/home/user1/Qt6.6.3/lib/ && \
+    command: bash -c "export LD_LIBRARY_PATH=${LD_LIBRARY_PATH}:/usr/local/src/robot/yarp/build/lib/:/home/user1/Qt6.7.3/lib/ && \
               source /opt/ros/iron/setup.bash && \
               source /usr/local/src/robot/yarp-devices-ros2/ros2_interfaces_ws/install/setup.bash && \
               source $${UC3_DIR}/install/setup.bash && \
@@ -151,7 +158,7 @@ services:
     image: ste93/convince:qt_6.7.3_ubuntu22.04_iron_stable_sim_completed
     <<: *base
     container_name: yarprun_console
-    command: bash -c "export LD_LIBRARY_PATH=${LD_LIBRARY_PATH}:/usr/local/src/robot/yarp/build/lib/:/home/user1/Qt6.6.3/lib/ && \
+    command: bash -c "export LD_LIBRARY_PATH=${LD_LIBRARY_PATH}:/usr/local/src/robot/yarp/build/lib/:/home/user1/Qt6.7.3/lib/ && \
               source /opt/ros/iron/setup.bash && \
               source /usr/local/src/robot/yarp-devices-ros2/ros2_interfaces_ws/install/setup.bash && \
               source $${UC3_DIR}/install/setup.bash && \
@@ -296,3 +303,73 @@ services:
       - run_bt_executable_prop1
       - groot_prop1
       - gazebo
+
+    
+################################# PROP2 #################################
+
+  run_bt_executable_prop2:
+    image: ste93/convince:qt_6.7.3_ubuntu22.04_iron_stable_sim_completed
+    <<: *base
+    container_name: run_bt_executable_prop2
+    command: bash -c "source /opt/ros/iron/setup.bash && \
+              source /usr/local/src/robot/yarp-devices-ros2/ros2_interfaces_ws/install/setup.bash && \
+              source $${UC3_DIR}/install/setup.bash && \
+              yarp conf 172.17.0.1 10000; yarp wait $${YARP_NAMESPACE}; \
+              ros2 run bt_executable bt_executable $${UC3_DIR}/src/behavior_tree/BT/Policy_prop2.xml"
+    depends_on:
+      - yarpserver
+      - yarprun
+      - yarplogger
+      - run_components
+      - run_skills
+
+  ros2oracleProp2:
+    image: ste93/convince:qt_6.7.3_ubuntu22.04_iron_stable_sim_completed
+    <<: *base
+    container_name: ros2oracleProp2
+    command: bash -c "source /opt/ros/iron/setup.bash && \
+              source $${UC3_DIR}//install/setup.bash && \
+              cd $${UC3_DIR}//monitoring && \
+              python3 /home/user1/ROSMonitoring/oracle/TLOracle/oracle.py --online --dense --property prop2"
+
+  groot_prop2:
+    image: ste93/convince:qt_6.7.3_ubuntu22.04_iron_stable_sim_completed
+    <<: *base
+    container_name: groot_prop2
+    command: bash -c "source /opt/ros/iron/setup.bash && \
+              source /usr/local/src/robot/yarp-devices-ros2/ros2_interfaces_ws/install/setup.bash && \
+              source $${UC3_DIR}//install/setup.bash && \
+              /home/user1/Groot/build/Groot --mode monitor --autoconnect"
+    depends_on:
+      - yarpserver
+      - yarprun
+      - yarplogger
+      - run_components
+      - run_skills
+      - run_bt_executable_prop2
+
+  ros2monitorProp2:
+    image: ste93/convince:qt_6.7.3_ubuntu22.04_iron_stable_sim_completed
+    <<: *base
+    container_name: ros2monitorProp2
+    command: bash -c "source /opt/ros/iron/setup.bash && \
+              source $${UC3_DIR}/install/setup.bash && \
+              cd $${UC3_DIR}/monitoring/monitor_prop2_ws/src/ && \
+              source install/setup.bash && \
+              ros2 launch monitor/launch/monitor.launch"
+    depends_on:
+      - ros2oracleProp2
+      - terminator
+      - yarpserver
+      - yarpclock
+      - rosclock
+      - fakeBattery
+      - mapServer
+      - localization
+      - navigator
+      - yarprun
+      - yarplogger
+      - run_components
+      - run_skills
+      - run_bt_executable_prop2
+      - groot_prop2
