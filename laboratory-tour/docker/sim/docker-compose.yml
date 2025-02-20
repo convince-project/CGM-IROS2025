@@ -200,9 +200,9 @@ services:
       - yarprun_console
       - yarplogger
       - gazebo 
-      - mapServer
-      - localization
-      - navigator
+      # - mapServer
+      # - localization
+      # - navigator
 
 ################################# COMPONENT AND SKILLS #################################
   run_components:
