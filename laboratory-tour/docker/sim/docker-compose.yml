@@ -34,6 +34,13 @@ services:
       dockerfile: Dockerfile
       context: .
 
+  monitoring:
+    image: ste93/convince:qt_6.7.3_ubuntu22.04_iron_stable_sim_monitoring
+    build:
+      dockerfile: Dockerfile.mon
+      context: .
+
+
 # containers
   terminator:
     image: ste93/convince:qt_6.7.3_ubuntu22.04_iron_stable_sim_completed
@@ -252,7 +259,7 @@ services:
 
       
   ros2oracleProp1:
-    image: ste93/convince:qt_6.7.3_ubuntu22.04_iron_stable_sim_completed
+    image: ste93/convince:qt_6.7.3_ubuntu22.04_iron_stable_sim_monitoring
     <<: *base
     container_name: ros2oracleProp1
     command: bash -c "source /opt/ros/iron/setup.bash && \
@@ -278,7 +285,7 @@ services:
       - run_bt_executable_prop1
 
   ros2monitorProp1:
-    image: ste93/convince:qt_6.7.3_ubuntu22.04_iron_stable_sim_completed
+    image: ste93/convince:qt_6.7.3_ubuntu22.04_iron_stable_sim_monitoring
     <<: *base
     container_name: ros2monitorProp1
     command: bash -c "source /opt/ros/iron/setup.bash && \
@@ -292,10 +299,10 @@ services:
       - yarpserver
       # - yarpclock
       # - rosclock
-      - fakeBattery
-      - mapServer
-      - localization
-      - navigator
+      # - fakeBattery
+      # - mapServer
+      # - localization
+      # - navigator
       - yarprun
       - yarplogger
       - run_components
@@ -309,29 +316,29 @@ services:
 #---------------------------------- Battery Level Skill ---------------------------
 
   ros2oracleBatteryLevelFSM:
-    image: ste93/convince:qt_6.7.3_ubuntu22.04_iron_stable_sim_completed
+    image: ste93/convince:qt_6.7.3_ubuntu22.04_iron_stable_sim_monitoring
     <<: *base
     container_name: ros2oracleBatteryLevelFSM
     command: bash -c "source /opt/ros/iron/setup.bash && \
               source $${UC3_DIR}/install/setup.bash && \
               cd /home/user1/MOON/ModelMonitor/modeloracle && \
               mvn exec:java -Dexec.mainClass=io.github.convince.moon.Oracle -Dexec.args='--ioshape /home/user1/MOON/ModelMonitor/config_generator/BatteryLevelSkill_ioshape.json --statemachine /home/user1/UC3/laboratory-tour/model_scxml/BatteryLevelSkill.scxml --address 127.0.0.1:8081'"
-    depends_on:
-      - terminator
-      - yarpserver
+    # depends_on:
+      # - terminator
+      # - yarpserver
       # - yarpclock
       # - rosclock
-      - fakeBattery
-      - mapServer
-      - localization
-      - navigator
-      - yarprun
-      - yarplogger
-      - run_components
-      - run_skills
+      # - fakeBattery
+      # - mapServer
+      # - localization
+      # - navigator
+      # - yarprun
+      # - yarplogger
+      # - run_components
+      # - run_skills
 
   ros2monitorBatteryLevelFSM:
-    image: ste93/convince:qt_6.7.3_ubuntu22.04_iron_stable_sim_completed
+    image: ste93/convince:qt_6.7.3_ubuntu22.04_iron_stable_sim_monitoring
     <<: *base
     container_name: ros2monitorBatteryLevelFSM
     command: bash -c "source /opt/ros/iron/setup.bash && \
@@ -344,16 +351,16 @@ services:
       - yarpserver
       # - yarpclock
       # - rosclock
-      - fakeBattery
-      - mapServer
-      - localization
-      - navigator
+      # - fakeBattery
+      # - mapServer
+      # - localization
+      # - navigator
       - yarprun
       - yarplogger
       - run_components
       - run_skills
       - run_bt_executable_prop1
-      - groot_prop1
+      # - groot_prop1
       - ros2oracleBatteryLevelFSM
       - gazebo
 
