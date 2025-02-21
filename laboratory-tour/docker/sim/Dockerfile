@@ -5,7 +5,7 @@ USER root
 
 ENV DEBIAN_FRONTEND=noninteractive
 
-RUN apt-get update && apt upgrade -y
+RUN apt-get update 
 RUN apt-get install -y libczmq-dev ros-iron-zmqpp-vendor-dbgsym ros-iron-zmqpp-vendor libczmq-dev libczmq4 curl 
 
 RUN apt install qtbase5-dev libqt5svg5-dev libzmq3-dev libdw-dev libboost-all-dev -y
@@ -101,10 +101,16 @@ RUN /bin/bash -c "cd /home/user1 && \
     mvn org.apache.maven.plugins:maven-install-plugin:2.5.2:install-file -Dfile=target/commons-scxml2-2.0-SNAPSHOT.jar"
 
 
+RUN /bin/bash -c "sudo apt install gobject-introspection libgirepository1.0-dev -y && \
+cd /home/user1/ && \
+python3 -m venv monitoring-python-env && \
+/home/user1/monitoring-python-env/bin/pip install --upgrade pip && \
+/home/user1/monitoring-python-env/bin/pip install websocket_client rospy_message_converter pyyaml reelay jedi pycairo PyGObject prompt_toolkit"
+
 
 RUN echo "export PATH=\$PATH:/home/user1/Groot/build" >> ~/.bashrc
 
-RUN /bin/bash -c "echo 'updated on 202502211008' && \
+RUN /bin/bash -c "echo 'updated on 202502211348' && \
     source /opt/ros/iron/setup.bash && \
     cd /home/user1 && \
     git clone https://github.com/convince-project/UC3.git -b  dev/IROS2025 && \
@@ -115,12 +121,6 @@ RUN /bin/bash -c "echo 'updated on 202502211008' && \
 
 RUN echo "source /home/user1/UC3/laboratory-tour/install/setup.bash" >> ~/.bashrc
 # 
-
-RUN /bin/bash -c "sudo apt install gobject-introspection libgirepository1.0-dev -y && \
-    cd /home/user1/ && \
-    python3 -m venv monitoring-python-env && \
-    /home/user1/monitoring-python-env/bin/pip install --upgrade pip && \
-    /home/user1/monitoring-python-env/bin/pip install websocket_client rospy_message_converter pyyaml reelay jedi pycairo PyGObject prompt_toolkit"
 
 RUN /bin/bash -c "source /opt/ros/iron/setup.bash && \
     cd /home/user1/ROSMonitoring/generator/ros2_devel && \
@@ -149,9 +149,23 @@ RUN /bin/bash -c "source /opt/ros/iron/setup.bash && \
     mvn install"
 
 
+RUN /bin/bash -c "source /opt/ros/iron/setup.bash && \
+    cd /home/user1/MOON/ModelMonitor/config_generator && \
+    python3 config_gen.py --monitor-ws-path /home/user1/UC3/laboratory-tour/monitoring/monitor_skill_battery/src --oracle-address 127.0.0.1:8081 /home/user1/UC3/laboratory-tour/model-high-level/Skills/BatteryLevelSkill.scxml"
+
+RUN /bin/bash -c "source /opt/ros/iron/setup.bash && \
+    cd /home/user1/ROSMonitoring/generator/ros2_devel && \
+    /home/user1/monitoring-python-env/bin/python generator --config_file  /home/user1/MOON/ModelMonitor/config_generator/monitor_BatteryLevelSkill.yaml && \
+    cd /home/user1/UC3/laboratory-tour/monitoring/monitor_skill_battery/src && \
+    colcon build"
+
 
 # as2fm_scxml_to_jani --generated-scxml-dir model_low_level_dir main.xml
 
 ENV PATH=${PATH}:/home/user1/.local/bin
 
 ENV LD_LIBRARY_PATH=${LD_LIBRARY_PATH}:/usr/local/src/robot/yarp/build/lib/
+
+
+# mvn exec:java -Dexec.mainClass=io.github.convince.moon.Oracle -Dexec.args="--ioshape /home/user1/MOON/ModelMonitor/config_generator/BatteryLevelSkill_ioshape.json --statemachine /home/user1/UC3/laboratory-tour/model_scxml/BatteryLevelSkill.scxml --address 127.0.0.1:8081"
+
