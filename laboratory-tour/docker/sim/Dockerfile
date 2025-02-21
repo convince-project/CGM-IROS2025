@@ -93,15 +93,24 @@ RUN /bin/bash -c "curl https://sh.rustup.rs -sSf | sh -s -- -y"
 
 RUN /bin/bash -c "source /home/user1/.cargo/env && cargo install --git https://github.com/convince-project/scan"
 
+RUN /bin/bash -c "cd /home/user1 && \
+    sudo apt install maven openjdk-21-jdk -y && \
+    git clone https://github.com/apache/commons-scxml.git && \
+    cd commons-scxml && \
+    mvn && \
+    mvn org.apache.maven.plugins:maven-install-plugin:2.5.2:install-file -Dfile=target/commons-scxml2-2.0-SNAPSHOT.jar"
+
+
+
 RUN echo "export PATH=\$PATH:/home/user1/Groot/build" >> ~/.bashrc
 
-RUN /bin/bash -c "echo 'updated on 202502071145' && \
+RUN /bin/bash -c "echo 'updated on 202502211008' && \
     source /opt/ros/iron/setup.bash && \
     cd /home/user1 && \
     git clone https://github.com/convince-project/UC3.git -b  dev/IROS2025 && \
     source /opt/ros/iron/setup.bash && \
     cd /home/user1/UC3/laboratory-tour/ && \
-    colcon build --packages-ignore face_expressions_wrapper dialog_component"
+    colcon build --base-paths src/* --packages-ignore face_expressions_wrapper dialog_component"
 
 
 RUN echo "source /home/user1/UC3/laboratory-tour/install/setup.bash" >> ~/.bashrc
@@ -130,6 +139,18 @@ RUN /bin/bash -c "source /opt/ros/iron/setup.bash && \
     colcon build && \
     cd /home/user1/UC3/laboratory-tour/monitoring/monitor_prop5_ws/src/ && \
     colcon build"
+
+
+
+RUN /bin/bash -c "source /opt/ros/iron/setup.bash && \
+    cd /home/user1/ && \
+    git clone https://github.com/convince-project/MOON.git -b dev/model-monitoring && \
+    cd /home/user1/MOON/ModelMonitor/modeloracle && \
+    mvn install"
+
+
+
+# as2fm_scxml_to_jani --generated-scxml-dir model_low_level_dir main.xml
 
 ENV PATH=${PATH}:/home/user1/.local/bin
 
