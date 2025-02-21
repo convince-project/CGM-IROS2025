@@ -1,0 +1,26 @@
+<scxml name="global_timer_automata" version="1.0" model_src="" initial="idle" xmlns="http://www.w3.org/2005/07/scxml">
+    <datamodel>
+        <!-- TYPE current_time:int64 -->
+        <data id="current_time" expr="0"/>
+    </datamodel>
+    <state id="idle">
+        <onexit>
+            <send event="TIME" target="NONE" delay="1"/>
+        </onexit>
+        <transition target="idle" cond="current_time &lt; 100000">
+            <assign location="current_time" expr="current_time + 100"/>
+            <if cond="(current_time % 1000) == 0">
+                <send event="ros_time_rate.control_timer" target="BatteryComponent"/>
+            </if>
+            <if cond="(current_time % 1000) == 0">
+                <send event="ros_time_rate.control_timer_2" target="PeopleDetectorFilterComponent"/>
+            </if>
+            <if cond="(current_time % 100) == 0">
+                <send event="ros_time_rate.control_timer_3" target="NavigationComponent__GoToPoi_thread_0"/>
+            </if>
+            <if cond="(current_time % 100) == 0">
+                <send event="ros_time_rate.Policy_tick" target="bt_root_fsm_Policy"/>
+            </if>
+        </transition>
+    </state>
+</scxml>

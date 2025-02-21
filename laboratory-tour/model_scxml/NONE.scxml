@@ -1,0 +1,3 @@
+<scxml name="NONE" version="1.0" model_src="" initial="idle" xmlns="http://www.w3.org/2005/07/scxml">
+    <state id="idle"/>
+</scxml>

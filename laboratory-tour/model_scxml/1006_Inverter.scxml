@@ -1,0 +1,31 @@
+<scxml name="1006_Inverter" version="1.0" model_src="" initial="wait_for_tick" xmlns="http://www.w3.org/2005/07/scxml">
+    <datamodel>
+        <!-- TYPE children_count:int8 -->
+        <data id="children_count" expr="1"/>
+    </datamodel>
+    <state id="wait_for_tick">
+        <transition target="error" cond="children_count != 1"/>
+        <transition target="tick_child" event="bt_1006_tick"/>
+    </state>
+    <state id="tick_child">
+        <onentry>
+            <send event="bt_1007_tick" target="1007_ROS2Condition"/>
+        </onentry>
+        <transition target="wait_for_tick" event="bt_1007_response" cond="_event.data.status == 1">
+            <send event="bt_1006_response" target="1005_Sequence">
+                <param name="status" expr="2"/>
+            </send>
+        </transition>
+        <transition target="wait_for_tick" event="bt_1007_response" cond="_event.data.status == 2">
+            <send event="bt_1006_response" target="1005_Sequence">
+                <param name="status" expr="1"/>
+            </send>
+        </transition>
+        <transition target="wait_for_tick" event="bt_1007_response" cond="_event.data.status == 3">
+            <send event="bt_1006_response" target="1005_Sequence">
+                <param name="status" expr="3"/>
+            </send>
+        </transition>
+    </state>
+    <state id="error"/>
+</scxml>
