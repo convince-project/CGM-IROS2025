@@ -11,7 +11,7 @@
     <!-- ////////// -->
     <BehaviorTree ID="BatteryManagment">
         <ReactiveFallback>
-            <Condition ID="ROS2Condition" name="BatteryLevel" interface="ROS2SERVICE" isMonitored="false"/>
+            <Condition ID="ROS2Condition" name="BatteryLevel" interface="ROS2SERVICE" isMonitored="true"/>
             <Action ID="ROS2Action" name="Alarm" interface="ROS2SERVICE" isMonitored="true"/>
         </ReactiveFallback>
     </BehaviorTree>
