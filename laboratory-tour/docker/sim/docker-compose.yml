@@ -47,24 +47,24 @@ services:
     container_name: yarpserver
     command: sh -c "yarp conf 172.17.0.1 10000; yarpserver"
 
-  yarpclock:
-    image: ste93/convince:qt_6.7.3_ubuntu22.04_iron_stable_sim_completed
-    <<: *base
-    container_name: yarpclock
-    command: sh -c "yarp conf 172.17.0.1 10000; yarp clock"
-    depends_on:
-      - yarpserver
+  # yarpclock:
+  #   image: ste93/convince:qt_6.7.3_ubuntu22.04_iron_stable_sim_completed
+  #   <<: *base
+  #   container_name: yarpclock
+  #   command: sh -c "yarp conf 172.17.0.1 10000; yarp clock"
+  #   depends_on:
+  #     - yarpserver
 
-  rosclock:
-      image: ste93/convince:qt_6.7.3_ubuntu22.04_iron_stable_sim_completed
-      <<: *base
-      container_name: rosclock
-      command: bash -c "source /opt/ros/iron/setup.bash && \
-                source /usr/local/src/robot/yarp-devices-ros2/ros2_interfaces_ws/install/setup.bash && \
-                source $${UC3_DIR}/install/setup.bash && \
-                yarp conf 172.17.0.1 10000; yarp wait $${YARP_NAMESPACE}; \
-                export LD_LIBRARY_PATH=${LD_LIBRARY_PATH}:/usr/local/src/robot/yarp/build/lib/; 
-                ros2 run clock_component clock_component"
+  # rosclock:
+  #     image: ste93/convince:qt_6.7.3_ubuntu22.04_iron_stable_sim_completed
+  #     <<: *base
+  #     container_name: rosclock
+  #     command: bash -c "source /opt/ros/iron/setup.bash && \
+  #               source /usr/local/src/robot/yarp-devices-ros2/ros2_interfaces_ws/install/setup.bash && \
+  #               source $${UC3_DIR}/install/setup.bash && \
+  #               yarp conf 172.17.0.1 10000; yarp wait $${YARP_NAMESPACE}; \
+  #               export LD_LIBRARY_PATH=${LD_LIBRARY_PATH}:/usr/local/src/robot/yarp/build/lib/; 
+  #               ros2 run clock_component clock_component"
 
 
   gazebo:
@@ -80,7 +80,7 @@ services:
               ros2 launch gazebo_ros gazebo.launch.py extra_gazebo_args:=-slibgazebo_yarp_clock.so world:=/usr/local/src/robot/tour-guide-robot/app/maps/SIM_GAM/GAM.world"
     depends_on:
       - yarpserver
-      - rosclock
+      # - rosclock
 
   yarpmanager:
     image: ste93/convince:qt_6.7.3_ubuntu22.04_iron_stable_sim_completed
@@ -100,8 +100,8 @@ services:
               source /usr/local/src/robot/yarp-devices-ros2/ros2_interfaces_ws/install/setup.bash && \
               source $${UC3_DIR}/install/setup.bash && \
               yarp conf 172.17.0.1 10000; yarp wait $${YARP_NAMESPACE}; \
-              echo $${UC3_DIR} && \
-              yarprobotinterface --config $${UC3_DIR}/src/components/fake_battery_component/robotinterface.xml"
+              yarprobotinterface --config /home/user1/UC3/laboratory-tour/src/components/fake_battery_component/robotinterface.xml"
+              # yarprobotinterface --config $${UC3_DIR}/src/components/fake_battery_component/robotinterface.xml"
     depends_on:
       - yarpserver
       - gazebo
@@ -192,8 +192,8 @@ services:
     depends_on:
       - terminator 
       - yarpserver
-      - yarpclock
-      - rosclock
+      # - yarpclock
+      # - rosclock
       - yarpmanager
       - fakeBattery
       - yarprun
@@ -290,8 +290,8 @@ services:
       - ros2oracleProp1
       - terminator
       - yarpserver
-      - yarpclock
-      - rosclock
+      # - yarpclock
+      # - rosclock
       - fakeBattery
       - mapServer
       - localization
@@ -361,8 +361,8 @@ services:
       - ros2oracleProp2
       - terminator
       - yarpserver
-      - yarpclock
-      - rosclock
+      # - yarpclock
+      # - rosclock
       - fakeBattery
       - mapServer
       - localization
