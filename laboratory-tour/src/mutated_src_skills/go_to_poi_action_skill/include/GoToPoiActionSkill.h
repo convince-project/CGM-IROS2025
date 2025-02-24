@@ -7,7 +7,7 @@
 #include "GoToPoiActionSkillSM.h"
 #include <bt_interfaces_dummy/msg/action_response.hpp>
 #include <scheduler_interfaces_dummy/srv/get_current_poi.hpp> 
-#include <navigation_interfaces_dummy/action/go_to_poi_action.hpp> 
+#include <navigation_interfaces_dummy/action/go_to_poi.hpp> 
 
 
 
