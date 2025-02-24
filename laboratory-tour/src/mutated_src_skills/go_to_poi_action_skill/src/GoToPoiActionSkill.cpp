@@ -83,7 +83,7 @@ bool GoToPoiActionSkill::start(int argc, char*argv[])
                                                                             	std::placeholders::_1,
                                                                             	std::placeholders::_2));
   
-  m_actionClient = rclcpp_action::create_client<navigation_interfaces_dummy::action::GoToPoiAction>(m_node, "/NavigationComponent/GoToPoiAction");
+  m_actionClient = rclcpp_action::create_client<navigation_interfaces_dummy::action::GoToPoi>(m_node, "/NavigationComponent/GoToPoi");
   m_send_goal_options.goal_response_callback = std::bind(&GoToPoiActionSkill::goal_response_callback, this, std::placeholders::_1);
   m_send_goal_options.feedback_callback =   std::bind(&GoToPoiActionSkill::feedback_callback, this, std::placeholders::_1, std::placeholders::_2);
   m_send_goal_options.result_callback =  std::bind(&GoToPoiActionSkill::result_callback, this, std::placeholders::_1);
@@ -163,9 +163,9 @@ bool GoToPoiActionSkill::start(int argc, char*argv[])
     RCLCPP_INFO(m_node->get_logger(), "GoToPoiActionSkill::NavigationComponent.GoToPoiAction.SendGoal");
     RCLCPP_INFO(m_node->get_logger(), "calling send goal");
     std::shared_ptr<rclcpp::Node> nodeGoToPoiAction = rclcpp::Node::make_shared(m_name + "SkillNodeGoToPoiAction");
-    rclcpp_action::Client<navigation_interfaces_dummy::action::GoToPoiAction>::SharedPtr clientGoToPoiAction  =
-    rclcpp_action::create_client<navigation_interfaces_dummy::action::GoToPoiAction>(nodeGoToPoiAction, "/NavigationComponent/GoToPoiAction");
-    navigation_interfaces_dummy::action::GoToPoiAction::Goal goal_msg;
+    rclcpp_action::Client<navigation_interfaces_dummy::action::GoToPoi>::SharedPtr clientGoToPoiAction  =
+    rclcpp_action::create_client<navigation_interfaces_dummy::action::GoToPoi>(nodeGoToPoiAction, "/NavigationComponent/GoToPoi");
+    navigation_interfaces_dummy::action::GoToPoi::Goal goal_msg;
     
     std::string temp = event.data().toMap()["poi_number"].toString().toStdString();
     goal_msg.poi_number = convert<decltype(goal_msg.poi_number)>(temp);
@@ -176,8 +176,8 @@ bool GoToPoiActionSkill::start(int argc, char*argv[])
   m_stateMachine.connectToEvent("NavigationComponent.GoToPoiAction.ResultRequest", [this]([[maybe_unused]]const QScxmlEvent & event){
       RCLCPP_INFO(m_node->get_logger(), "GoToPoiActionSkill::NavigationComponent.GoToPoiAction.ResultRequest");
       std::shared_ptr<rclcpp::Node> nodeGoToPoiAction = rclcpp::Node::make_shared(m_name + "SkillNodeGoToPoiAction");
-      rclcpp_action::Client<navigation_interfaces_dummy::action::GoToPoiAction>::SharedPtr clientGoToPoiAction  =
-        rclcpp_action::create_client<navigation_interfaces_dummy::action::GoToPoiAction>(nodeGoToPoiAction, "/NavigationComponent/GoToPoi");
+      rclcpp_action::Client<navigation_interfaces_dummy::action::GoToPoi>::SharedPtr clientGoToPoiAction  =
+        rclcpp_action::create_client<navigation_interfaces_dummy::action::GoToPoi>(nodeGoToPoiAction, "/NavigationComponent/GoToPoi");
       RCLCPP_INFO(m_node->get_logger(), "result request");
   });
   m_stateMachine.connectToEvent("NavigationComponent.GoToPoiAction.Feedback", [this]([[maybe_unused]]const QScxmlEvent & event){

@@ -59,14 +59,14 @@ private:
 	std::shared_ptr<rclcpp::Node> m_node_action;
 	std::mutex m_actionMutex;
 	std::mutex m_feedbackMutex;
-	rclcpp_action::Client<navigation_interfaces_dummy::action::GoToPoiAction>::SendGoalOptions m_send_goal_options;
-	rclcpp_action::Client<navigation_interfaces_dummy::action::GoToPoiAction>::SharedPtr m_actionClient;
-	void goal_response_callback(const  rclcpp_action::ClientGoalHandle<navigation_interfaces_dummy::action::GoToPoiAction>::SharedPtr & goal_handle);
-	void send_goal(navigation_interfaces_dummy::action::GoToPoiAction::Goal);
+	rclcpp_action::Client<navigation_interfaces_dummy::action::GoToPoi>::SendGoalOptions m_send_goal_options;
+	rclcpp_action::Client<navigation_interfaces_dummy::action::GoToPoi>::SharedPtr m_actionClient;
+	void goal_response_callback(const  rclcpp_action::ClientGoalHandle<navigation_interfaces_dummy::action::GoToPoi>::SharedPtr & goal_handle);
+	void send_goal(navigation_interfaces_dummy::action::GoToPoi::Goal);
 	void feedback_callback(
-    	rclcpp_action::ClientGoalHandle<navigation_interfaces_dummy::action::GoToPoiAction>::SharedPtr,
-    	const std::shared_ptr<const navigation_interfaces_dummy::action::GoToPoiAction::Feedback> feedback);
-	void result_callback(const  rclcpp_action::ClientGoalHandle<navigation_interfaces_dummy::action::GoToPoiAction>::WrappedResult & result);
+    	rclcpp_action::ClientGoalHandle<navigation_interfaces_dummy::action::GoToPoi>::SharedPtr,
+    	const std::shared_ptr<const navigation_interfaces_dummy::action::GoToPoi::Feedback> feedback);
+	void result_callback(const  rclcpp_action::ClientGoalHandle<navigation_interfaces_dummy::action::GoToPoi>::WrappedResult & result);
 	
 	
   	int m_status;
