@@ -247,7 +247,7 @@ void GoToPoiActionSkill::halt( [[maybe_unused]] const std::shared_ptr<bt_interfa
 
 
 
-void GoToPoiActionSkill::send_goal(navigation_interfaces_dummy::action::GoToPoiAction::Goal goal_msg)
+void GoToPoiActionSkill::send_goal(navigation_interfaces_dummy::action::GoToPoi::Goal goal_msg)
 {
   using namespace std::placeholders;
   bool wait_succeded{true};
@@ -278,7 +278,7 @@ void GoToPoiActionSkill::send_goal(navigation_interfaces_dummy::action::GoToPoiA
     }
   }
 
-void GoToPoiActionSkill::result_callback(const  rclcpp_action::ClientGoalHandle<navigation_interfaces_dummy::action::GoToPoiAction>::WrappedResult & result)
+void GoToPoiActionSkill::result_callback(const  rclcpp_action::ClientGoalHandle<navigation_interfaces_dummy::action::GoToPoi>::WrappedResult & result)
 {
   switch (result.code) {
     case rclcpp_action::ResultCode::SUCCEEDED:
@@ -300,7 +300,7 @@ void GoToPoiActionSkill::result_callback(const  rclcpp_action::ClientGoalHandle<
   m_stateMachine.submitEvent("NavigationComponent.GoToPoiAction.ResultResponse", data);
   RCLCPP_INFO(rclcpp::get_logger("rclcpp"), "NavigationComponent.GoToPoiAction.ResultResponse");
 }
-void GoToPoiActionSkill::goal_response_callback(const rclcpp_action::ClientGoalHandle<navigation_interfaces_dummy::action::GoToPoiAction>::SharedPtr & goal_handle)
+void GoToPoiActionSkill::goal_response_callback(const rclcpp_action::ClientGoalHandle<navigation_interfaces_dummy::action::GoToPoi>::SharedPtr & goal_handle)
 {
   std::cout << "Provaa" << std::endl;
   QVariantMap data;
@@ -318,8 +318,8 @@ void GoToPoiActionSkill::goal_response_callback(const rclcpp_action::ClientGoalH
 }
 
 void GoToPoiActionSkill::feedback_callback(
-    rclcpp_action::ClientGoalHandle<navigation_interfaces_dummy::action::GoToPoiAction>::SharedPtr,
-  const std::shared_ptr<const navigation_interfaces_dummy::action::GoToPoiAction::Feedback> feedback)
+    rclcpp_action::ClientGoalHandle<navigation_interfaces_dummy::action::GoToPoi>::SharedPtr,
+  const std::shared_ptr<const navigation_interfaces_dummy::action::GoToPoi::Feedback> feedback)
 {
   
   m_status = feedback->status;
