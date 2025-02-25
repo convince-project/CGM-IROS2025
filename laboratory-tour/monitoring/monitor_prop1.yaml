@@ -14,7 +14,7 @@ monitors: # here we list the monitors we are going to generate
           type: std_msgs.msg.Int32 
           action: log
         - name: clock
-          type: builtin_interfaces.msg.Time
+          type: rosgraph_msgs.msg.Clock
           action: log 
       services:
         - name: AlarmSkill/tick
