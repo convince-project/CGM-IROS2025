@@ -87,6 +87,7 @@ RUN /bin/bash -c "source /opt/ros/iron/setup.bash && \
 
 RUN /bin/bash -c "source /opt/ros/iron/setup.bash && \
     cd /home/user1/ && \
+    echo 'updated on 202502250954' && \
     git clone https://github.com/convince-project/MOON.git -b dev/model-monitoring && \
     cd /home/user1/MOON/ModelMonitor/modeloracle && \
     mvn install"
