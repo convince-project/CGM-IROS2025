@@ -1,0 +1,89 @@
+<application>
+    <name>convince_bt_skills</name>
+
+    <module>
+        <name>ros2</name>
+        <parameters>run alarm_skill alarm_skill</parameters>
+        <workdir />
+        <node>bt</node>
+    </module>
+    <module>
+        <name>ros2</name>
+        <parameters>run battery_level_skill_fault4 battery_level_skill_fault4</parameters>
+        <workdir />
+        <node>bt</node>
+    </module>
+
+    <module>
+        <name>ros2</name>
+        <parameters>run wait_skill wait_skill</parameters>
+        <workdir />
+        <node>bt</node>
+    </module>
+
+    <module>
+        <name>ros2</name>
+        <parameters>run visitors_following_robot_skill visitors_following_robot_skill</parameters>
+        <workdir />
+        <node>bt</node>
+    </module>
+    
+
+    <module>
+        <name>ros2</name>
+        <parameters>run run_timer_skill run_timer_skill</parameters>
+        <workdir />
+        <node>bt</node>
+    </module>
+
+    <module>
+        <name>ros2</name>
+        <parameters>run is_poi_done1_skill is_poi_done1_skill</parameters>
+        <workdir />
+        <node>bt</node>
+    </module>
+
+    <module>
+        <name>ros2</name>
+        <parameters>run is_poi_done2_skill is_poi_done2_skill</parameters>
+        <workdir />
+        <node>bt</node>
+    </module>
+
+    <module>
+        <name>ros2</name>
+        <parameters>run set_poi1_skill set_poi1_skill</parameters>
+        <workdir />
+        <node>bt</node>
+    </module>
+
+    <module>
+        <name>ros2</name>
+        <parameters>run set_poi2_skill set_poi2_skill</parameters>
+        <workdir />
+        <node>bt</node>
+    </module>
+
+    <module>
+        <name>ros2</name>
+        <parameters>run set_current_poi_done_skill set_current_poi_done_skill</parameters>
+        <workdir />
+        <node>bt</node>
+    </module>
+
+    <module>
+        <name>ros2</name>
+        <parameters>run go_to_poi_action_skill go_to_poi_action_skill</parameters>
+        <workdir />
+        <node>bt</node>
+    </module>
+
+    <module>
+        <name>ros2</name>
+        <parameters>run reset_skill reset_skill</parameters>
+        <workdir />
+        <node>bt</node>
+    </module>
+
+
+</application>
