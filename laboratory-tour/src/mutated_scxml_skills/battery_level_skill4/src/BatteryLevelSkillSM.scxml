@@ -22,8 +22,9 @@
     <state id="checkLevel">
         <onentry>
             <log expr="&apos;State checkLevel&apos;"/>
+            <!-- It goes to the next state but it does not give a response to the tick -->
             <if cond="percentage &gt; 30">
-                <if cond="m_probability &gt; 0.5">
+                <!-- <if cond="m_probability &gt; 0.5">
                     <send event="TICK_RESPONSE">
                         <param name="status" expr="SKILL_SUCCESS"/>
                         <param name="is_ok" expr="true"/>
@@ -33,12 +34,12 @@
                         <param name="status" expr="SKILL_FAILURE"/>
                         <param name="is_ok" expr="true"/>
                     </send>
-                </if>
+                </if> -->
                 <else/>
-                <send event="TICK_RESPONSE">
+                <!-- <send event="TICK_RESPONSE">
                     <param name="status" expr="SKILL_FAILURE"/>
                     <param name="is_ok" expr="true"/>
-                </send>
+                </send> -->
             </if>
         </onentry>
         <transition target="checkLevel" event="CMD_TICK"/>

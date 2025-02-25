@@ -14,7 +14,13 @@
             <assign location="m_probability" expr="Math.random()"/>
             <log expr="m_probability"/>
         </onentry>
-        <transition target="checkLevel" event="CMD_TICK"/>
+        <transition target="idle" event="CMD_TICK">
+        <!-- It does not go to the next state but it gives a response to the tick -->
+            <send event="TICK_RESPONSE">
+                <param name="status" expr="SKILL_SUCCESS"/>
+                <param name="is_ok" expr="true"/>
+            </send>
+        </transition>
         <transition target="idle" event="BatteryComponent.battery_level.Sub">
             <assign location="percentage" expr="_event.data.percentage"/>
         </transition>
