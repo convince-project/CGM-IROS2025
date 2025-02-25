@@ -13,6 +13,7 @@
 
 #include <ROS2Action.h>
 
+
 ROS2Action::ROS2Action(const std::string name, const BT::NodeConfiguration& config) :
         ActionNodeBase(name, config)
 {
@@ -29,6 +30,7 @@ ROS2Action::ROS2Action(const std::string name, const BT::NodeConfiguration& conf
     {
        RCLCPP_ERROR(rclcpp::get_logger("rclcpp"), "Something went wrong in the node init() of %s", ActionNodeBase::name().c_str());
     }
+
 }
 
 
@@ -37,6 +39,7 @@ int ROS2Action::sendTickToSkill()
     auto msg = bt_interfaces_dummy::msg::ActionResponse();
     RCLCPP_INFO(rclcpp::get_logger("rclcpp"), "sending tick to  %s ", ActionNodeBase::name().c_str());
     auto request = std::make_shared<bt_interfaces_dummy::srv::TickAction::Request>();
+
     while (!m_clientTick->wait_for_service(std::chrono::seconds(1))) {
         if (!rclcpp::ok()) {
         RCLCPP_ERROR(rclcpp::get_logger("rclcpp"), "Interrupted while waiting for the service TickAction. Exiting.");
@@ -118,7 +121,8 @@ bool ROS2Action::init()
     m_clientTick = m_node->create_client<bt_interfaces_dummy::srv::TickAction>(ActionNodeBase::name() + "Skill/tick" + m_suffixMonitor);
     m_clientHalt = m_node->create_client<bt_interfaces_dummy::srv::HaltAction>(ActionNodeBase::name() + "Skill/halt" + m_suffixMonitor);
     RCLCPP_INFO_STREAM(rclcpp::get_logger("rclcpp"),"name " << ActionNodeBase::name() << "suffixmonitor " << m_suffixMonitor);
-    
+    this->m_clientTick->configure_introspection(
+        m_node->get_clock(), rclcpp::SystemDefaultsQoS(), RCL_SERVICE_INTROSPECTION_CONTENTS);
     return true;
 
 }

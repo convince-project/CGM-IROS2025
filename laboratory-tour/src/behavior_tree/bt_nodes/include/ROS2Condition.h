@@ -18,6 +18,7 @@
 #include <string>
 #include<behaviortree_cpp_v3/condition_node.h>
 #include <rclcpp/rclcpp.hpp>
+#include <rcl/service_introspection.h>
 
 class ROS2Condition :  public BT::ConditionNode
 {

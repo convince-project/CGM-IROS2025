@@ -19,6 +19,7 @@
 #include <bt_interfaces_dummy/srv/halt_action.hpp>
 #include <rclcpp/rclcpp.hpp>
 #include <behaviortree_cpp_v3/action_node.h>
+#include <rcl/service_introspection.h>
 
 class ROS2Action :  public BT::ActionNodeBase
 {
