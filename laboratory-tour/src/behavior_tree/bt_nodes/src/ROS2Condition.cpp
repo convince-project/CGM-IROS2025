@@ -91,7 +91,12 @@ BT::NodeStatus ROS2Condition::tick()
 {
     auto message = bt_interfaces_dummy::msg::ConditionResponse();
     RCLCPP_INFO(rclcpp::get_logger("rclcpp"), "Node %s sending tick to skill", ConditionNode::name().c_str());
+    auto time_start = std::chrono::high_resolution_clock::now();
     auto status = sendTickToSkill();
+    auto time_end = std::chrono::high_resolution_clock::now();
+    m_average_time = (m_average_time * m_tick_count + duration.count()) / (m_tick_count + 1);
+    m_tick_count++;
+    RCLCPP_INFO(rclcpp::get_logger("rclcpp"), "Node %s received status %d in %d microseconds, average time %f", ActionNodeBase::name().c_str(), status, duration.count(), m_average_time);
     switch (status) {
         case message.SKILL_SUCCESS:
             return BT::NodeStatus::SUCCESS;

@@ -62,7 +62,13 @@ BT::NodeStatus ROS2Action::tick()
     std::lock_guard<std::mutex> lock(m_requestMutex);
     auto message = bt_interfaces_dummy::msg::ActionResponse();
     RCLCPP_INFO(rclcpp::get_logger("rclcpp"), "Node %s sending tick to skill", ActionNodeBase::name().c_str());
+    auto time_start = std::chrono::high_resolution_clock::now();
     auto status = sendTickToSkill();
+    auto time_end = std::chrono::high_resolution_clock::now();
+    auto duration = std::chrono::duration_cast<std::chrono::microseconds>(time_end - time_start);
+    m_average_time = (m_average_time * m_tick_count + duration.count()) / (m_tick_count + 1);
+    m_tick_count++;
+    RCLCPP_INFO(rclcpp::get_logger("rclcpp"), "Node %s received status %d in %d microseconds, average time %f", ActionNodeBase::name().c_str(), status, duration.count(), m_average_time);
     switch (status) {
         case message.SKILL_RUNNING:
             return BT::NodeStatus::RUNNING;

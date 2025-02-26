@@ -39,5 +39,7 @@ private:
     std::shared_ptr<rclcpp::Node> m_node;
     std::string m_name;
     std::string m_suffixMonitor;
+    double m_average_time = 0;
+    int m_tick_count = 0;
 };
 
