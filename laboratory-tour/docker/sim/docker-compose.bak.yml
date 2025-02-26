@@ -69,14 +69,14 @@ services:
   #     - yarpserver
 
   # rosclock:
-  #     image: ste93/convince:qt_6.7.3_ubuntu22.04_iron_stable_sim_completed  
+  #     image: ste93/convince:qt_6.7.3_ubuntu22.04_iron_stable_sim_completed
   #     <<: *base
   #     container_name: rosclock
   #     command: bash -c "source /opt/ros/iron/setup.bash && \
   #               source /usr/local/src/robot/yarp-devices-ros2/ros2_interfaces_ws/install/setup.bash && \
   #               source $${UC3_DIR}/install/setup.bash && \
   #               yarp conf 172.17.0.1 10000; yarp wait $${YARP_NAMESPACE}; \
-  #               export LD_LIBRARY_PATH=${LD_LIBRARY_PATH}:/usr/local/src/robot/yarp/build/lib/:/opt/ros/iron/lib/ && \ 
+  #               export LD_LIBRARY_PATH=${LD_LIBRARY_PATH}:/usr/local/src/robot/yarp/build/lib/; 
   #               ros2 run clock_component clock_component"
 
 
@@ -240,35 +240,35 @@ services:
               source /usr/local/src/robot/yarp-devices-ros2/ros2_interfaces_ws/install/setup.bash && \
               source $${UC3_DIR}/install/setup.bash && \
               yarp conf 172.17.0.1 10000; yarp wait $${YARP_NAMESPACE}; \
-              yarpmanager-console --application $${UC3_DIR}/launch/applications/convince_bt_skills_with_fault8.xml --exit --run --connect"
+              yarpmanager-console --application $${UC3_DIR}/launch/applications/convince_bt_skills.xml --exit --run --connect"
     depends_on:
       - yarpserver
       - yarprun
       - yarplogger
-  # run_skills_with_fault:
-  #   image: ste93/convince:qt_6.7.3_ubuntu22.04_iron_stable_sim_completed
-  #   <<: *base
-  #   container_name: run_skills_with_fault
-  #   command: bash -c "sleep 2; source /opt/ros/iron/setup.bash && \
-  #             source /usr/local/src/robot/yarp-devices-ros2/ros2_interfaces_ws/install/setup.bash && \
-  #             source $${UC3_DIR}/install/setup.bash && \
-  #             yarp conf 172.17.0.1 10000; yarp wait $${YARP_NAMESPACE}; \
-  #             yarpmanager-console --application $${UC3_DIR}/launch/applications/convince_bt_skills_with_fault7.xml --exit --run --connect"
-  #   depends_on:
-  #     - yarpserver
-  #     - yarprun
-  #     - yarplogger
-
-
-  run_bt_executable_all:
+  run_skills_with_fault:
     image: ste93/convince:qt_6.7.3_ubuntu22.04_iron_stable_sim_completed
     <<: *base
-    container_name: run_bt_executable_all
+    container_name: run_skills_with_fault
+    command: bash -c "sleep 2; source /opt/ros/iron/setup.bash && \
+              source /usr/local/src/robot/yarp-devices-ros2/ros2_interfaces_ws/install/setup.bash && \
+              source $${UC3_DIR}/install/setup.bash && \
+              yarp conf 172.17.0.1 10000; yarp wait $${YARP_NAMESPACE}; \
+              yarpmanager-console --application $${UC3_DIR}/launch/applications/convince_bt_skills_with_fault.xml --exit --run --connect"
+    depends_on:
+      - yarpserver
+      - yarprun
+      - yarplogger
+
+################################# PROP1 #################################
+  run_bt_executable_prop1:
+    image: ste93/convince:qt_6.7.3_ubuntu22.04_iron_stable_sim_completed
+    <<: *base
+    container_name: run_bt_executable_prop1
     command: bash -c "source /opt/ros/iron/setup.bash && \
               source /usr/local/src/robot/yarp-devices-ros2/ros2_interfaces_ws/install/setup.bash && \
               source $${UC3_DIR}/install/setup.bash && \
               yarp conf 172.17.0.1 10000; yarp wait $${YARP_NAMESPACE}; \
-              ros2 run bt_executable bt_executable $${UC3_DIR}/src/behavior_tree/BT/Policy_propAll.xml"
+              ros2 run bt_executable bt_executable $${UC3_DIR}/src/behavior_tree/BT/Policy_prop1.xml"
     depends_on:
       - yarpserver
       - yarprun
@@ -276,7 +276,6 @@ services:
       - run_components
       # - run_skills_with_fault
       - run_skills
-      # - rosclock
 
       
   ros2oracleProp1:
@@ -286,86 +285,13 @@ services:
     command: bash -c "source /opt/ros/iron/setup.bash && \
               source $${UC3_DIR}/install/setup.bash && \
               cd $${UC3_DIR}/monitoring && \
-              python3 /home/user1/ROSMonitoring/oracle/TLOracle/oracle.py --port 8091 --online --dense --property prop1"
+              python3 /home/user1/ROSMonitoring/oracle/TLOracle/oracle.py --online --dense --property prop1"
 
-  ros2oracleProp2:
-    image: ste93/convince:qt_6.7.3_ubuntu22.04_iron_stable_sim_monitoring
-    <<: *base
-    container_name: ros2oracleProp2
-    command: bash -c "source /opt/ros/iron/setup.bash && \
-              source $${UC3_DIR}/install/setup.bash && \
-              cd $${UC3_DIR}/monitoring && \
-              python3 /home/user1/ROSMonitoring/oracle/TLOracle/oracle.py --port 8092 --online --dense --property prop2"
-
-  ros2oracleProp3:
-    image: ste93/convince:qt_6.7.3_ubuntu22.04_iron_stable_sim_monitoring
-    <<: *base
-    container_name: ros2oracleProp3
-    command: bash -c "source /opt/ros/iron/setup.bash && \
-              source $${UC3_DIR}/install/setup.bash && \
-              cd $${UC3_DIR}/monitoring && \
-              python3 /home/user1/ROSMonitoring/oracle/TLOracle/oracle.py --port 8093 --online --dense --property prop3"
-
-  ros2oracleProp4:
-    image: ste93/convince:qt_6.7.3_ubuntu22.04_iron_stable_sim_monitoring
-    <<: *base
-    container_name: ros2oracleProp4
-    command: bash -c "source /opt/ros/iron/setup.bash && \
-              source $${UC3_DIR}/install/setup.bash && \
-              cd $${UC3_DIR}/monitoring && \
-              python3 /home/user1/ROSMonitoring/oracle/TLOracle/oracle.py --port 8094 --online --dense --property prop4"
-
-  ros2oracleProp5:
-    image: ste93/convince:qt_6.7.3_ubuntu22.04_iron_stable_sim_monitoring
-    <<: *base
-    container_name: ros2oracleProp5
-    command: bash -c "source /opt/ros/iron/setup.bash && \
-              source $${UC3_DIR}/install/setup.bash && \
-              cd $${UC3_DIR}/monitoring && \
-              python3 /home/user1/ROSMonitoring/oracle/TLOracle/oracle.py --port 8095 --online --dense --property prop5"
-
-
-  ros2oracleBatteryLevelFSM:
-    image: ste93/convince:qt_6.7.3_ubuntu22.04_iron_stable_sim_monitoring
-    <<: *base
-    container_name: ros2oracleBatteryLevelFSM
-    command: bash -c "source /opt/ros/iron/setup.bash && \
-              source $${UC3_DIR}/install/setup.bash && \
-              cd /home/user1/MOON/ModelMonitor/modeloracle && \
-              mvn exec:java -Dexec.mainClass=io.github.convince.moon.Oracle -Dexec.args='--ioshape /home/user1/MOON/ModelMonitor/config_generator/BatteryLevelSkill_ioshape.json --statemachine /home/user1/UC3/laboratory-tour/model_scxml/BatteryLevelSkill.scxml --address 127.0.0.1:8081'"
-
-  ros2oracleAlarmFSM:
-    image: ste93/convince:qt_6.7.3_ubuntu22.04_iron_stable_sim_monitoring
-    <<: *base
-    container_name: ros2oracleAlarmFSM
-    command: bash -c "source /opt/ros/iron/setup.bash && \
-              source $${UC3_DIR}/install/setup.bash && \
-              cd /home/user1/MOON/ModelMonitor/modeloracle && \
-              mvn exec:java -Dexec.mainClass=io.github.convince.moon.Oracle -Dexec.args='--ioshape /home/user1/MOON/ModelMonitor/config_generator/AlarmSkill_ioshape.json --statemachine /home/user1/UC3/laboratory-tour/model_scxml/AlarmSkill.scxml --address 127.0.0.1:8082'"
   
-  ros2oracleIsPoiDone1FSM:
-    image: ste93/convince:qt_6.7.3_ubuntu22.04_iron_stable_sim_monitoring
-    <<: *base
-    container_name: ros2oracleIsPoiDone1FSM
-    command: bash -c "source /opt/ros/iron/setup.bash && \
-              source $${UC3_DIR}/install/setup.bash && \
-              cd /home/user1/MOON/ModelMonitor/modeloracle && \
-              mvn exec:java -Dexec.mainClass=io.github.convince.moon.Oracle -Dexec.args='--ioshape /home/user1/MOON/ModelMonitor/config_generator/IsPoiDone1Skill_ioshape.json --statemachine /home/user1/UC3/laboratory-tour/model_scxml/IsPoiDone1Skill.scxml --address 127.0.0.1:8083'"
-
-
-  ros2oracleSetPoi1FSM:
-    image: ste93/convince:qt_6.7.3_ubuntu22.04_iron_stable_sim_monitoring
-    <<: *base
-    container_name: ros2oracleSetPoi1FSM
-    command: bash -c "source /opt/ros/iron/setup.bash && \
-              source $${UC3_DIR}/install/setup.bash && \
-              cd /home/user1/MOON/ModelMonitor/modeloracle && \
-              mvn exec:java -Dexec.mainClass=io.github.convince.moon.Oracle -Dexec.args='--ioshape /home/user1/MOON/ModelMonitor/config_generator/SetPoi1Skill_ioshape.json --statemachine /home/user1/UC3/laboratory-tour/model_scxml/SetPoi1Skill.scxml --address 127.0.0.1:8084'"
-  
-  groot_propAll:
+  groot_prop1:
     image: ste93/convince:qt_6.7.3_ubuntu22.04_iron_stable_sim_completed
     <<: *base
-    container_name: groot_propAll
+    container_name: groot_prop1
     command: bash -c "source /opt/ros/iron/setup.bash && \
               source /usr/local/src/robot/yarp-devices-ros2/ros2_interfaces_ws/install/setup.bash && \
               source $${UC3_DIR}/install/setup.bash && \
@@ -377,9 +303,8 @@ services:
       - run_components
       # - run_skills_with_fault
       - run_skills
-      - run_bt_executable_all
+      - run_bt_executable_prop1
 
- 
   ros2monitorProp1:
     image: ste93/convince:qt_6.7.3_ubuntu22.04_iron_stable_sim_monitoring
     <<: *base
@@ -393,97 +318,46 @@ services:
       - ros2oracleProp1
       - terminator
       - yarpserver
+      # - yarpclock
+      # - rosclock
+      # - fakeBattery
+      # - mapServer
+      # - localization
+      # - navigator
       - yarprun
       - yarplogger
       - run_components
+      # - run_skills_with_fault
       - run_skills
-      - run_bt_executable_all
+      - run_bt_executable_prop1
+      - groot_prop1
       - gazebo
 
 
-  ros2monitorProp2:
+
+#---------------------------------- Battery Level Skill ---------------------------
+
+  ros2oracleBatteryLevelFSM:
     image: ste93/convince:qt_6.7.3_ubuntu22.04_iron_stable_sim_monitoring
     <<: *base
-    container_name: ros2monitorProp2
+    container_name: ros2oracleBatteryLevelFSM
     command: bash -c "source /opt/ros/iron/setup.bash && \
               source $${UC3_DIR}/install/setup.bash && \
-              cd $${UC3_DIR}/monitoring/monitor_prop2_ws/src/ && \
-              source install/setup.bash && \
-              ros2 launch monitor/launch/monitor.launch"
-    depends_on:
-      - ros2oracleProp2
-      - terminator
-      - yarpserver
-      - yarprun
-      - yarplogger
-      - run_components
-      - run_skills
-      - run_bt_executable_all
-      - gazebo
-
-
-  ros2monitorProp3:
-    image: ste93/convince:qt_6.7.3_ubuntu22.04_iron_stable_sim_monitoring
-    <<: *base
-    container_name: ros2monitorProp3
-    command: bash -c "source /opt/ros/iron/setup.bash && \
-              source $${UC3_DIR}/install/setup.bash && \
-              cd $${UC3_DIR}/monitoring/monitor_prop3_ws/src/ && \
-              source install/setup.bash && \
-              ros2 launch monitor/launch/monitor.launch"
-    depends_on:
-      - ros2oracleProp3
-      - terminator
-      - yarpserver
-      - yarprun
-      - yarplogger
-      - run_components
-      - run_skills
-      - run_bt_executable_all
-      - gazebo
-
-  
-  ros2monitorProp4:
-    image: ste93/convince:qt_6.7.3_ubuntu22.04_iron_stable_sim_monitoring
-    <<: *base
-    container_name: ros2monitorProp4
-    command: bash -c "source /opt/ros/iron/setup.bash && \
-              source $${UC3_DIR}/install/setup.bash && \
-              cd $${UC3_DIR}/monitoring/monitor_prop4_ws/src/ && \
-              source install/setup.bash && \
-              ros2 launch monitor/launch/monitor.launch"
-    depends_on:
-      - ros2oracleProp4
-      - terminator
-      - yarpserver
-      - yarprun
-      - yarplogger
-      - run_components
-      - run_skills
-      - run_bt_executable_all
-      - gazebo
-
-
-  ros2monitorProp5:
-    image: ste93/convince:qt_6.7.3_ubuntu22.04_iron_stable_sim_monitoring
-    <<: *base
-    container_name: ros2monitorProp5
-    command: bash -c "source /opt/ros/iron/setup.bash && \
-              source $${UC3_DIR}/install/setup.bash && \
-              cd $${UC3_DIR}/monitoring/monitor_prop5_ws/src/ && \
-              source install/setup.bash && \
-              ros2 launch monitor/launch/monitor.launch"
-    depends_on:
-      - ros2oracleProp5
-      - terminator
-      - yarpserver
-      - yarprun
-      - yarplogger
-      - run_components
-      - run_skills
-      - run_bt_executable_all
-      - gazebo
-
+              cd /home/user1/MOON/ModelMonitor/modeloracle && \
+              mvn exec:java -Dexec.mainClass=io.github.convince.moon.Oracle -Dexec.args='--ioshape /home/user1/MOON/ModelMonitor/config_generator/BatteryLevelSkill_ioshape.json --statemachine /home/user1/UC3/laboratory-tour/model_scxml/BatteryLevelSkill.scxml --address 127.0.0.1:8081'"
+    # depends_on:
+      # - terminator
+      # - yarpserver
+      # - yarpclock
+      # - rosclock
+      # - fakeBattery
+      # - mapServer
+      # - localization
+      # - navigator
+      # - yarprun
+      # - yarplogger
+      # - run_components
+      # - run_skills 
 
   ros2monitorBatteryLevelFSM:
     image: ste93/convince:qt_6.7.3_ubuntu22.04_iron_stable_sim_monitoring
@@ -491,111 +365,140 @@ services:
     container_name: ros2monitorBatteryLevelFSM
     command: bash -c "source /opt/ros/iron/setup.bash && \
               source $${UC3_DIR}/install/setup.bash && \
-              cd /home/user1/UC3/laboratory-tour/monitoring/monitor_BatteryLevelSkill/src/ && \
+              cd /home/user1/UC3/laboratory-tour/monitoring/monitor_skill_battery/src/ && \
               source install/setup.bash && \
               ros2 launch monitor/launch/monitor.launch"
     depends_on:
       - terminator
       - yarpserver
+      # - yarpclock
+      # - rosclock
+      # - fakeBattery
+      # - mapServer
+      # - localization
+      # - navigator
       - yarprun
       - yarplogger
       - run_components
+      # - run_skills_with_fault
       - run_skills
-      - run_bt_executable_all
+      - run_bt_executable_prop1
+      # - groot_prop1
       - ros2oracleBatteryLevelFSM
       - gazebo
 
-  ros2monitorAlarmFSM:
-    image: ste93/convince:qt_6.7.3_ubuntu22.04_iron_stable_sim_monitoring
-    <<: *base
-    container_name: ros2monitorAlarmFSM
-    command: bash -c "source /opt/ros/iron/setup.bash && \
-              source $${UC3_DIR}/install/setup.bash && \
-              cd /home/user1/UC3/laboratory-tour/monitoring/monitor_AlarmSkill/src/ && \
-              source install/setup.bash && \
-              ros2 launch monitor/launch/monitor.launch"
-    depends_on:
-      - terminator
-      - terminator_mon
-      - yarpserver
-      - yarprun
-      - yarplogger
-      - run_components
-      - run_skills
-      - run_bt_executable_all
-      - ros2oracleAlarmFSM
-      - gazebo
 
-  ros2monitorIsPoiDone1FSM:
-    image: ste93/convince:qt_6.7.3_ubuntu22.04_iron_stable_sim_monitoring
-    <<: *base
-    container_name: ros2monitorIsPoiDone1FSM
-    command: bash -c "source /opt/ros/iron/setup.bash && \
-              source $${UC3_DIR}/install/setup.bash && \
-              cd /home/user1/UC3/laboratory-tour/monitoring/monitor_IsPoiDone1Skill/src/ && \
-              source install/setup.bash && \
-              ros2 launch monitor/launch/monitor.launch"
-    depends_on:
-      - terminator
-      - yarpserver
-      - yarprun
-      - yarplogger
-      - run_components
-      - run_skills
-      - run_bt_executable_all
-      - ros2oracleIsPoiDone1FSM
-      - gazebo
-
-  ros2monitorSetPoi1FSM:
-    image: ste93/convince:qt_6.7.3_ubuntu22.04_iron_stable_sim_monitoring
-    <<: *base
-    container_name: ros2monitorSetPoi1FSM
-    command: bash -c "source /opt/ros/iron/setup.bash && \
-              source $${UC3_DIR}/install/setup.bash && \
-              cd /home/user1/UC3/laboratory-tour/monitoring/monitor_SetPoi1Skill/src/ && \
-              source install/setup.bash && \
-              ros2 launch monitor/launch/monitor.launch"
-    depends_on:
-      - terminator
-      - yarpserver
-      - yarprun
-      - yarplogger
-      - run_components
-      - run_skills
-      - run_bt_executable_all
-      - ros2oracleSetPoi1FSM
-      - gazebo
-
-
-  run_all:
+    
+################################# Prop_test_intro #################################
+  run_bt_executable_Prop_test_intro:
     image: ste93/convince:qt_6.7.3_ubuntu22.04_iron_stable_sim_completed
     <<: *base
-    container_name: run_all 
-    command: bash -c "echo 'done monitoring'"
+    container_name: run_bt_executable_Prop_test_intro
+    command: bash -c "sleep 7; source /opt/ros/iron/setup.bash && \
+              source /usr/local/src/robot/yarp-devices-ros2/ros2_interfaces_ws/install/setup.bash && \
+              source $${UC3_DIR}/install/setup.bash && \
+              yarp conf 172.17.0.1 10000; yarp wait $${YARP_NAMESPACE}; \
+              ros2 run bt_executable bt_executable $${UC3_DIR}/src/behavior_tree/BT/Policy_prop2.xml"
     depends_on:
-      - ros2monitorProp1
-      - ros2monitorProp2
-      - ros2monitorProp3
-      - ros2monitorProp4
-      - ros2monitorProp5
-      - ros2monitorBatteryLevelFSM
-      - ros2monitorAlarmFSM
-      - ros2monitorIsPoiDone1FSM
-      - ros2monitorSetPoi1FSM
-      - groot_propAll
+      - yarpserver
+      - yarprun
+      - yarplogger
+      - run_components
+      - run_skills
+      # - run_skills_with_fault
 
-  run_oracles:
+      
+  ros2oracleProp1Copy:
+    image: ste93/convince:qt_6.7.3_ubuntu22.04_iron_stable_sim_monitoring
+    <<: *base
+    container_name: ros2oracleProp1Copy
+    command: bash -c "source /opt/ros/iron/setup.bash && \
+              source $${UC3_DIR}/install/setup.bash && \
+              cd $${UC3_DIR}/monitoring && \
+              python3 /home/user1/ROSMonitoring/oracle/TLOracle/oracle.py --online --dense --property prop1"
+
+  ros2oracleProp_test_intro:
+    image: ste93/convince:qt_6.7.3_ubuntu22.04_iron_stable_sim_monitoring
+    <<: *base
+    container_name: ros2oracleProp_test_intro
+    command: bash -c "source /opt/ros/iron/setup.bash && \
+              source $${UC3_DIR}/install/setup.bash && \
+              cd $${UC3_DIR}/monitoring && \
+              python3 /home/user1/ROSMonitoring/oracle/TLOracle/oracle.py --port 8088 --online --dense --property propTestIntro"
+
+  
+  groot_Prop_test_intro:
     image: ste93/convince:qt_6.7.3_ubuntu22.04_iron_stable_sim_completed
     <<: *base
-    container_name: run_oracles
-    command: bash -c "echo 'done oracles'"
+    container_name: groot_Prop_test_intro
+    command: bash -c "source /opt/ros/iron/setup.bash && \
+              source /usr/local/src/robot/yarp-devices-ros2/ros2_interfaces_ws/install/setup.bash && \
+              source $${UC3_DIR}/install/setup.bash && \
+              /home/user1/Groot/build/Groot --mode monitor --autoconnect"
     depends_on:
-      - ros2oracleProp1
-      - ros2oracleProp2
-      - ros2oracleProp3
-      - ros2oracleProp4
-      - ros2oracleProp5
-      - ros2oracleBatteryLevelFSM
-      - ros2oracleAlarmFSM
-      - ros2oracleIsPoiDone1FSM
-      - ros2oracleSetPoi1FSM
+      - yarpserver
+      - yarprun
+      - yarplogger
+      - run_components
+      - run_skills
+      # - run_skills_with_fault
+      - run_bt_executable_Prop_test_intro
+
+  ros2monitorProp_test_intro:
+    image: ste93/convince:qt_6.7.3_ubuntu22.04_iron_stable_sim_monitoring
+    <<: *base
+    container_name: ros2monitorProp_test_intro
+    command: bash -c "source /opt/ros/iron/setup.bash && \
+              source $${UC3_DIR}/install/setup.bash && \
+              cd $${UC3_DIR}/monitoring/monitor_test_intro_ws/src/ && \
+              source install/setup.bash && \
+              ros2 launch monitor/launch/monitor.launch"
+    depends_on:
+      - ros2oracleProp_test_intro
+      - terminator
+      - yarpserver
+      # - yarpclock
+      # - rosclock
+      # - fakeBattery
+      # - mapServer
+      # - localization
+      # - navigator
+      - yarprun
+      - yarplogger
+      - run_components
+      # - run_skills_with_fault
+      - run_skills
+      - run_bt_executable_Prop_test_intro
+      - groot_Prop_test_intro
+      - gazebo
+
+  ros2monitorProp1Copy:
+    image: ste93/convince:qt_6.7.3_ubuntu22.04_iron_stable_sim_monitoring
+    <<: *base
+    container_name: ros2monitorProp1Copy
+    command: bash -c "source /opt/ros/iron/setup.bash && \
+              source $${UC3_DIR}/install/setup.bash && \
+              cd $${UC3_DIR}/monitoring/monitor_prop1_ws/src/ && \
+              source install/setup.bash && \
+              ros2 launch monitor/launch/monitor.launch"
+    depends_on:
+      - ros2oracleProp1Copy
+      - terminator
+      - yarpserver
+      # - yarpclock
+      # - rosclock
+      # - fakeBattery
+      # - mapServer
+      # - localization
+      # - navigator
+      - yarprun
+      - yarplogger
+      - run_components
+      # - run_skills_with_fault
+      - run_skills
+      - gazebo
+      - ros2monitorProp_test_intro
+
+
+#############################################prop test_intro
+
