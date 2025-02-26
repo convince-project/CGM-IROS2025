@@ -48,6 +48,12 @@ services:
     container_name: terminator
     command: sh -c "yarp conf 172.17.0.1 10000; terminator --no-dbus"
 
+  terminator_mon:
+    image: ste93/convince:qt_6.7.3_ubuntu22.04_iron_stable_sim_monitoring
+    <<: *base
+    container_name: terminator_mon
+    command: sh -c "yarp conf 172.17.0.1 10000; terminator --no-dbus"
+
   yarpserver:
     image: ste93/convince:qt_6.7.3_ubuntu22.04_iron_stable_sim_completed
     <<: *base
@@ -383,11 +389,11 @@ services:
 
 
     
-################################# PROP2 #################################
-  run_bt_executable_prop2:
+################################# Prop_test_intro #################################
+  run_bt_executable_Prop_test_intro:
     image: ste93/convince:qt_6.7.3_ubuntu22.04_iron_stable_sim_completed
     <<: *base
-    container_name: run_bt_executable_prop2
+    container_name: run_bt_executable_Prop_test_intro
     command: bash -c "source /opt/ros/iron/setup.bash && \
               source /usr/local/src/robot/yarp-devices-ros2/ros2_interfaces_ws/install/setup.bash && \
               source $${UC3_DIR}/install/setup.bash && \
@@ -402,20 +408,29 @@ services:
       # - run_skills_with_fault
 
       
-  ros2oracleProp2:
+  ros2oracleProp1Copy:
     image: ste93/convince:qt_6.7.3_ubuntu22.04_iron_stable_sim_monitoring
     <<: *base
-    container_name: ros2oracleProp2
+    container_name: ros2oracleProp1Copy
     command: bash -c "source /opt/ros/iron/setup.bash && \
               source $${UC3_DIR}/install/setup.bash && \
               cd $${UC3_DIR}/monitoring && \
-              python3 /home/user1/ROSMonitoring/oracle/TLOracle/oracle.py --online --dense --property prop2"
+              python3 /home/user1/ROSMonitoring/oracle/TLOracle/oracle.py --online --dense --property prop1"
+
+  ros2oracleProp_test_intro:
+    image: ste93/convince:qt_6.7.3_ubuntu22.04_iron_stable_sim_monitoring
+    <<: *base
+    container_name: ros2oracleProp_test_intro
+    command: bash -c "source /opt/ros/iron/setup.bash && \
+              source $${UC3_DIR}/install/setup.bash && \
+              cd $${UC3_DIR}/monitoring && \
+              python3 /home/user1/ROSMonitoring/oracle/TLOracle/oracle.py --port 8088 --online --dense --property propTestIntro"
 
   
-  groot_prop2:
+  groot_Prop_test_intro:
     image: ste93/convince:qt_6.7.3_ubuntu22.04_iron_stable_sim_completed
     <<: *base
-    container_name: groot_prop2
+    container_name: groot_Prop_test_intro
     command: bash -c "source /opt/ros/iron/setup.bash && \
               source /usr/local/src/robot/yarp-devices-ros2/ros2_interfaces_ws/install/setup.bash && \
               source $${UC3_DIR}/install/setup.bash && \
@@ -427,19 +442,19 @@ services:
       - run_components
       - run_skills
       # - run_skills_with_fault
-      - run_bt_executable_prop2
+      - run_bt_executable_Prop_test_intro
 
-  ros2monitorProp2:
+  ros2monitorProp_test_intro:
     image: ste93/convince:qt_6.7.3_ubuntu22.04_iron_stable_sim_monitoring
     <<: *base
-    container_name: ros2monitorProp2
+    container_name: ros2monitorProp_test_intro
     command: bash -c "source /opt/ros/iron/setup.bash && \
               source $${UC3_DIR}/install/setup.bash && \
-              cd $${UC3_DIR}/monitoring/monitor_prop2_ws/src/ && \
+              cd $${UC3_DIR}/monitoring/monitor_test_intro_ws/src/ && \
               source install/setup.bash && \
               ros2 launch monitor/launch/monitor.launch"
     depends_on:
-      - ros2oracleProp2
+      - ros2oracleProp_test_intro
       - terminator
       - yarpserver
       # - yarpclock
@@ -453,7 +468,37 @@ services:
       - run_components
       # - run_skills_with_fault
       - run_skills
-      - run_bt_executable_prop2
-      - groot_prop2
+      - run_bt_executable_Prop_test_intro
+      - groot_Prop_test_intro
       - gazebo
+
+  ros2monitorProp1Copy:
+    image: ste93/convince:qt_6.7.3_ubuntu22.04_iron_stable_sim_monitoring
+    <<: *base
+    container_name: ros2monitorProp1Copy
+    command: bash -c "source /opt/ros/iron/setup.bash && \
+              source $${UC3_DIR}/install/setup.bash && \
+              cd $${UC3_DIR}/monitoring/monitor_prop1_ws/src/ && \
+              source install/setup.bash && \
+              ros2 launch monitor/launch/monitor.launch"
+    depends_on:
+      - ros2oracleProp1Copy
+      - terminator
+      - yarpserver
+      # - yarpclock
+      # - rosclock
+      # - fakeBattery
+      # - mapServer
+      # - localization
+      # - navigator
+      - yarprun
+      - yarplogger
+      - run_components
+      # - run_skills_with_fault
+      - run_skills
+      - gazebo
+      - ros2monitorProp_test_intro
+
+
+#############################################prop test_intro
 

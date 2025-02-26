@@ -124,23 +124,26 @@ RUN /bin/bash -c "echo 'updated on 202502251014' && \
 RUN echo "source /home/user1/UC3/laboratory-tour/install/setup.bash" >> ~/.bashrc
 # 
 
-RUN /bin/bash -c "source /opt/ros/iron/setup.bash && \
-    cd /home/user1/ROSMonitoring/generator/ros2_devel && \
-    /home/user1/monitoring-python-env/bin/python generator --config_file /home/user1/UC3/laboratory-tour/monitoring/monitor_prop1.yaml && \
-    /home/user1/monitoring-python-env/bin/python generator --config_file /home/user1/UC3/laboratory-tour/monitoring/monitor_prop2.yaml && \
-    /home/user1/monitoring-python-env/bin/python generator --config_file /home/user1/UC3/laboratory-tour/monitoring/monitor_prop3.yaml && \
-    /home/user1/monitoring-python-env/bin/python generator --config_file /home/user1/UC3/laboratory-tour/monitoring/monitor_prop4.yaml && \
-    /home/user1/monitoring-python-env/bin/python generator --config_file /home/user1/UC3/laboratory-tour/monitoring/monitor_prop5.yaml && \
-    cd /home/user1/UC3/laboratory-tour/monitoring/monitor_prop1_ws/src/ && \
-    colcon build && \
-    cd /home/user1/UC3/laboratory-tour/monitoring/monitor_prop2_ws/src/ && \
-    colcon build && \
-    cd /home/user1/UC3/laboratory-tour/monitoring/monitor_prop3_ws/src/ && \
-    colcon build && \
-    cd /home/user1/UC3/laboratory-tour/monitoring/monitor_prop4_ws/src/ && \
-    colcon build && \
-    cd /home/user1/UC3/laboratory-tour/monitoring/monitor_prop5_ws/src/ && \
-    colcon build"
+# RUN /bin/bash -c "source /opt/ros/iron/setup.bash && \
+#     cd /home/user1/ROSMonitoring/generator/ros2_devel && \
+#     /home/user1/monitoring-python-env/bin/python generator --config_file /home/user1/UC3/laboratory-tour/monitoring/monitor_prop1.yaml && \
+#     /home/user1/monitoring-python-env/bin/python generator --config_file /home/user1/UC3/laboratory-tour/monitoring/monitor_prop2.yaml && \
+#     /home/user1/monitoring-python-env/bin/python generator --config_file /home/user1/UC3/laboratory-tour/monitoring/monitor_prop3.yaml && \
+#     /home/user1/monitoring-python-env/bin/python generator --config_file /home/user1/UC3/laboratory-tour/monitoring/monitor_prop4.yaml && \
+#     /home/user1/monitoring-python-env/bin/python generator --config_file /home/user1/UC3/laboratory-tour/monitoring/monitor_prop5.yaml && \
+#     /home/user1/monitoring-python-env/bin/python generator --config_file /home/user1/UC3/laboratory-tour/monitoring/monitor_test_intro.yaml && \
+#     cd /home/user1/UC3/laboratory-tour/monitoring/monitor_prop1_ws/src/ && \
+#     colcon build && \
+#     cd /home/user1/UC3/laboratory-tour/monitoring/monitor_prop2_ws/src/ && \
+#     colcon build && \
+#     cd /home/user1/UC3/laboratory-tour/monitoring/monitor_prop3_ws/src/ && \
+#     colcon build && \
+#     cd /home/user1/UC3/laboratory-tour/monitoring/monitor_prop4_ws/src/ && \
+#     colcon build && \
+#     cd /home/user1/UC3/laboratory-tour/monitoring/monitor_test_intro_ws/src/ && \
+#     colcon build && \
+#     cd /home/user1/UC3/laboratory-tour/monitoring/monitor_prop5_ws/src/ && \
+#     colcon build"
 
 
 
