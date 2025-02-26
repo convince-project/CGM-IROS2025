@@ -8,12 +8,12 @@
     <!-- BatteryLevelSkill is a server for tick from the ROS2Condition plugin-->
     <!-- BatteryLevelSkill is a subscriber for the /battery_level topic from the BatteryComponent-->
     <state id="idle">
-        <transition target="areFollowing" event="CMD_TICK"/>
+        <transition target="checkLevel" event="CMD_TICK"/>
         <transition target="idle" event="BatteryComponent.battery_level.Sub">
             <assign location="percentage" expr="_event.data.percentage"/>
         </transition>
     </state>
-    <state id="areFollowing">
+    <state id="checkLevel">
         <onentry>
             <if cond="percentage &gt; 30">
                 <send event="TICK_RESPONSE">
@@ -27,7 +27,7 @@
                 </send>
             </if>
         </onentry>
-        <transition target="areFollowing" event="CMD_TICK"/>
+        <transition target="checkLevel" event="CMD_TICK"/>
         <transition target="idle"/>
     </state>
 </scxml>
