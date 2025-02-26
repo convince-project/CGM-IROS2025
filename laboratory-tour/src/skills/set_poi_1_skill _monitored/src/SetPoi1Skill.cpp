@@ -1,4 +1,4 @@
-#include "AlarmSkill.h"
+#include "SetPoi1Skill.h"
 #include <future>
 #include <QTimer>
 #include <QDebug>
@@ -20,37 +20,33 @@ T convert(const std::string& str) {
     else if constexpr (std::is_same_v<T, bool>) { 
         if (str == "true" || str == "1") { 
             return true; 
-        } 
-        else if (str == "false" || str == "0") { 
+        } else if (str == "false" || str == "0") { 
             return false; 
-        } 
-        else { 
+        } else { 
             throw std::invalid_argument("Invalid boolean value"); 
         } 
     } 
-    else if constexpr (std::is_same_v<T, std::string>) 
-    {
+    else if constexpr (std::is_same_v<T, std::string>) {
         return str;
     }
-    else 
-    {
+    else {
         throw std::invalid_argument("Unsupported type conversion");
     }
 }
 
-AlarmSkill::AlarmSkill(std::string name ) :
+SetPoi1Skill::SetPoi1Skill(std::string name ) :
 		m_name(std::move(name))
 {
     
 }
 
-void AlarmSkill::spin(std::shared_ptr<rclcpp::Node> node)
+void SetPoi1Skill::spin(std::shared_ptr<rclcpp::Node> node)
 {
 	rclcpp::spin(node);
 	rclcpp::shutdown();
 }
 
-bool AlarmSkill::start(int argc, char*argv[])
+bool SetPoi1Skill::start(int argc, char*argv[])
 {
 	if(!rclcpp::ok())
 	{
@@ -58,12 +54,12 @@ bool AlarmSkill::start(int argc, char*argv[])
 	}
 
 	m_node = rclcpp::Node::make_shared(m_name + "Skill");
-	RCLCPP_DEBUG_STREAM(m_node->get_logger(), "AlarmSkill::start");
-	std::cout << "AlarmSkill::start";
+	RCLCPP_DEBUG_STREAM(m_node->get_logger(), "SetPoi1Skill::start");
+	std::cout << "SetPoi1Skill::start";
 
     
 	m_tickService = m_node->create_service<bt_interfaces_dummy::srv::TickAction>(m_name + "Skill/tick",
-                                                                           	std::bind(&AlarmSkill::tick,
+                                                                           	std::bind(&SetPoi1Skill::tick,
                                                                            	this,
                                                                            	std::placeholders::_1,
                                                                            	std::placeholders::_2));
@@ -72,64 +68,60 @@ bool AlarmSkill::start(int argc, char*argv[])
     
 
     
-    m_stateMachine.connectToEvent("NotifyUserComponent.StartAlarm.Call", [this]([[maybe_unused]]const QScxmlEvent & event){
-        std::shared_ptr<rclcpp::Node> nodeStartAlarm = rclcpp::Node::make_shared(m_name + "SkillNodeStartAlarm");
-        std::shared_ptr<rclcpp::Client<notify_user_interfaces_dummy::srv::StartAlarm>> clientStartAlarm = nodeStartAlarm->create_client<notify_user_interfaces_dummy::srv::StartAlarm>("/NotifyUserComponent/StartAlarm");
-        auto request = std::make_shared<notify_user_interfaces_dummy::srv::StartAlarm::Request>();
+    m_stateMachine.connectToEvent("SchedulerComponent.SetPoi.Call", [this]([[maybe_unused]]const QScxmlEvent & event){
+        std::shared_ptr<rclcpp::Node> nodeSetPoi = rclcpp::Node::make_shared(m_name + "SkillNodeSetPoi");
+        std::shared_ptr<rclcpp::Client<scheduler_interfaces_dummy::srv::SetPoi>> clientSetPoi = nodeSetPoi->create_client<scheduler_interfaces_dummy::srv::SetPoi>("/SchedulerComponent/SetPoi_mon");
+        auto request = std::make_shared<scheduler_interfaces_dummy::srv::SetPoi::Request>();
         auto eventParams = event.data().toMap();
-        
+        request->poi_number = convert<decltype(request->poi_number)>(eventParams["poi_number"].toString().toStdString());
         bool wait_succeded{true};
         int retries = 0;
-        while (!clientStartAlarm->wait_for_service(std::chrono::seconds(1))) {
+        while (!clientSetPoi->wait_for_service(std::chrono::seconds(1))) {
             if (!rclcpp::ok()) {
-                RCLCPP_ERROR(rclcpp::get_logger("rclcpp"), "Interrupted while waiting for the service 'StartAlarm'. Exiting.");
+                RCLCPP_ERROR(rclcpp::get_logger("rclcpp"), "Interrupted while waiting for the service 'SetPoi'. Exiting.");
                 wait_succeded = false;
                 break;
             } 
             retries++;
             if(retries == SERVICE_TIMEOUT) {
-               RCLCPP_ERROR(rclcpp::get_logger("rclcpp"), "Timed out while waiting for the service 'StartAlarm'.");
+               RCLCPP_ERROR(rclcpp::get_logger("rclcpp"), "Timed out while waiting for the service 'SetPoi'.");
                wait_succeded = false;
                break;
             }
         }
         if (wait_succeded) {                                                                   
-            auto result = clientStartAlarm->async_send_request(request);
+            auto result = clientSetPoi->async_send_request(request);
             const std::chrono::seconds timeout_duration(SERVICE_TIMEOUT);
-            auto futureResult = rclcpp::spin_until_future_complete(nodeStartAlarm, result, timeout_duration);
+            auto futureResult = rclcpp::spin_until_future_complete(nodeSetPoi, result, timeout_duration);
             if (futureResult == rclcpp::FutureReturnCode::SUCCESS) 
             {
                auto response = result.get();
                if( response->is_ok ==true) {
                    QVariantMap data;
                    data.insert("is_ok", true);
-                   m_stateMachine.submitEvent("NotifyUserComponent.StartAlarm.Return", data);
-                   RCLCPP_INFO(rclcpp::get_logger("rclcpp"), "NotifyUserComponent.StartAlarm.Return");
+                   m_stateMachine.submitEvent("SchedulerComponent.SetPoi.Return", data);
+                   RCLCPP_INFO(rclcpp::get_logger("rclcpp"), "SchedulerComponent.SetPoi.Return");
                    return;
                }
            }
            else if(futureResult == rclcpp::FutureReturnCode::TIMEOUT){
-               RCLCPP_ERROR(rclcpp::get_logger("rclcpp"), "Timed out while future complete for the service 'StartAlarm'.");
+               RCLCPP_ERROR(rclcpp::get_logger("rclcpp"), "Timed out while future complete for the service 'SetPoi'.");
            }
         }
        QVariantMap data;
        data.insert("is_ok", false);
-       m_stateMachine.submitEvent("NotifyUserComponent.StartAlarm.Return", data);
-       RCLCPP_INFO(rclcpp::get_logger("rclcpp"), "NotifyUserComponent.StartAlarm.Return");
+       m_stateMachine.submitEvent("SchedulerComponent.SetPoi.Return", data);
+       RCLCPP_INFO(rclcpp::get_logger("rclcpp"), "SchedulerComponent.SetPoi.Return");
     });
     
 	m_stateMachine.connectToEvent("TICK_RESPONSE", [this]([[maybe_unused]]const QScxmlEvent & event){
-		RCLCPP_INFO(m_node->get_logger(), "AlarmSkill::tickReturn %s", event.data().toMap()["status"].toString().toStdString().c_str());
+		RCLCPP_INFO(m_node->get_logger(), "SetPoi1Skill::tickReturn %s", event.data().toMap()["status"].toString().toStdString().c_str());
 		std::string result = event.data().toMap()["status"].toString().toStdString();
-		if (result == std::to_string(SKILL_SUCCESS) )
+		if (result == std::to_string(SKILL_SUCCESS))
 		{
 			m_tickResult.store(Status::success);
 		}
-		else if (result == std::to_string(SKILL_RUNNING) )
-		{
-			m_tickResult.store(Status::running);
-		}
-		else if (result == std::to_string(SKILL_FAILURE) )
+		else if (result == std::to_string(SKILL_FAILURE))
 		{ 
 			m_tickResult.store(Status::failure);
 		}
@@ -142,11 +134,11 @@ bool AlarmSkill::start(int argc, char*argv[])
 	return true;
 }
 
-void AlarmSkill::tick( [[maybe_unused]] const std::shared_ptr<bt_interfaces_dummy::srv::TickAction::Request> request,
+void SetPoi1Skill::tick( [[maybe_unused]] const std::shared_ptr<bt_interfaces_dummy::srv::TickAction::Request> request,
                                 std::shared_ptr<bt_interfaces_dummy::srv::TickAction::Response>      response)
 {
     std::lock_guard<std::mutex> lock(m_requestMutex);
-    RCLCPP_INFO(m_node->get_logger(), "AlarmSkill::tick");
+    RCLCPP_INFO(m_node->get_logger(), "SetPoi1Skill::tick");
     m_tickResult.store(Status::undefined);
     m_stateMachine.submitEvent("CMD_TICK");
    
@@ -155,9 +147,7 @@ void AlarmSkill::tick( [[maybe_unused]] const std::shared_ptr<bt_interfaces_dumm
     }
     switch(m_tickResult.load()) 
     {
-        case Status::running:
-            response->status= SKILL_RUNNING;
-            break;
+        
         case Status::failure:
             response->status = SKILL_FAILURE;
             break;
@@ -165,7 +155,7 @@ void AlarmSkill::tick( [[maybe_unused]] const std::shared_ptr<bt_interfaces_dumm
             response->status = SKILL_SUCCESS;
             break;            
     }
-    RCLCPP_INFO(m_node->get_logger(), "AlarmSkill::tickDone");
+    RCLCPP_INFO(m_node->get_logger(), "SetPoi1Skill::tickDone");
     response->is_ok = true;
 }
 
