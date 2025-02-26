@@ -232,6 +232,9 @@ services:
       - yarprun
       - yarplogger
 
+################################# MONITORING #################################
+
+
   run_skills:
     image: ste93/convince:qt_6.7.3_ubuntu22.04_iron_stable_sim_completed
     <<: *base
@@ -246,30 +249,17 @@ services:
       - yarpserver
       - yarprun
       - yarplogger
-  # run_skills_with_fault:
-  #   image: ste93/convince:qt_6.7.3_ubuntu22.04_iron_stable_sim_completed
-  #   <<: *base
-  #   container_name: run_skills_with_fault
-  #   command: bash -c "sleep 2; source /opt/ros/iron/setup.bash && \
-  #             source /usr/local/src/robot/yarp-devices-ros2/ros2_interfaces_ws/install/setup.bash && \
-  #             source $${UC3_DIR}/install/setup.bash && \
-  #             yarp conf 172.17.0.1 10000; yarp wait $${YARP_NAMESPACE}; \
-  #             yarpmanager-console --application $${UC3_DIR}/launch/applications/convince_bt_skills_with_fault7.xml --exit --run --connect"
-  #   depends_on:
-  #     - yarpserver
-  #     - yarprun
-  #     - yarplogger
 
 
-  run_bt_executable_all:
+  run_bt_executable:
     image: ste93/convince:qt_6.7.3_ubuntu22.04_iron_stable_sim_completed
     <<: *base
-    container_name: run_bt_executable_all
+    container_name: run_bt_executable
     command: bash -c "source /opt/ros/iron/setup.bash && \
               source /usr/local/src/robot/yarp-devices-ros2/ros2_interfaces_ws/install/setup.bash && \
               source $${UC3_DIR}/install/setup.bash && \
               yarp conf 172.17.0.1 10000; yarp wait $${YARP_NAMESPACE}; \
-              ros2 run bt_executable bt_executable $${UC3_DIR}/src/behavior_tree/BT/Policy_propAll.xml"
+              ros2 run bt_executable bt_executable $${UC3_DIR}/src/behavior_tree/BT/Policy.xml"
     depends_on:
       - yarpserver
       - yarprun
@@ -277,6 +267,39 @@ services:
       - run_components
       # - run_skills_with_fault
       - run_skills
+
+  run_skills_monitored:
+    image: ste93/convince:qt_6.7.3_ubuntu22.04_iron_stable_sim_completed
+    <<: *base
+    container_name: run_skills_monitored
+    command: bash -c "sleep 2; source /opt/ros/iron/setup.bash && \
+              source /usr/local/src/robot/yarp-devices-ros2/ros2_interfaces_ws/install/setup.bash && \
+              source $${UC3_DIR}/install/setup.bash && \
+              yarp conf 172.17.0.1 10000; yarp wait $${YARP_NAMESPACE}; \
+              yarpmanager-console --application $${UC3_DIR}/launch/applications/convince_bt_skills_monitored.xml --exit --run --connect"
+              # yarpmanager-console --application $${UC3_DIR}/launch/applications/convince_bt_skills_with_fault8.xml --exit --run --connect"
+    depends_on:
+      - yarpserver
+      - yarprun
+      - yarplogger
+
+
+  run_bt_executable_monitored:
+    image: ste93/convince:qt_6.7.3_ubuntu22.04_iron_stable_sim_completed
+    <<: *base
+    container_name: run_bt_executable_monitored
+    command: bash -c "source /opt/ros/iron/setup.bash && \
+              source /usr/local/src/robot/yarp-devices-ros2/ros2_interfaces_ws/install/setup.bash && \
+              source $${UC3_DIR}/install/setup.bash && \
+              yarp conf 172.17.0.1 10000; yarp wait $${YARP_NAMESPACE}; \
+              ros2 run bt_executable bt_executable $${UC3_DIR}/src/behavior_tree/BT/Policy_monitored.xml"
+    depends_on:
+      - yarpserver
+      - yarprun
+      - yarplogger
+      - run_components
+      # - run_skills_with_fault
+      - run_skills_monitored
       # - rosclock
 
       
@@ -377,8 +400,8 @@ services:
       - yarplogger
       - run_components
       # - run_skills_with_fault
-      - run_skills
-      - run_bt_executable_all
+      - run_skills_monitored
+      - run_bt_executable_monitored
 
  
   ros2monitorProp1:
@@ -397,8 +420,8 @@ services:
       - yarprun
       - yarplogger
       - run_components
-      - run_skills
-      - run_bt_executable_all
+      - run_skills_monitored
+      - run_bt_executable_monitored
       - gazebo
 
 
@@ -417,9 +440,7 @@ services:
       - yarpserver
       - yarprun
       - yarplogger
-      - run_components
-      - run_skills
-      - run_bt_executable_all
+      - run_bt_executable_monitored
       - gazebo
 
 
@@ -438,9 +459,7 @@ services:
       - yarpserver
       - yarprun
       - yarplogger
-      - run_components
-      - run_skills
-      - run_bt_executable_all
+      - run_bt_executable_monitored
       - gazebo
 
   
@@ -459,9 +478,7 @@ services:
       - yarpserver
       - yarprun
       - yarplogger
-      - run_components
-      - run_skills
-      - run_bt_executable_all
+      - run_bt_executable_monitored
       - gazebo
 
 
@@ -480,9 +497,7 @@ services:
       - yarpserver
       - yarprun
       - yarplogger
-      - run_components
-      - run_skills
-      - run_bt_executable_all
+      - run_bt_executable_monitored
       - gazebo
 
 
@@ -500,9 +515,7 @@ services:
       - yarpserver
       - yarprun
       - yarplogger
-      - run_components
-      - run_skills
-      - run_bt_executable_all
+      - run_bt_executable_monitored
       - ros2oracleBatteryLevelFSM
       - gazebo
 
@@ -521,9 +534,7 @@ services:
       - yarpserver
       - yarprun
       - yarplogger
-      - run_components
-      - run_skills
-      - run_bt_executable_all
+      - run_bt_executable_monitored
       - ros2oracleAlarmFSM
       - gazebo
 
@@ -541,9 +552,7 @@ services:
       - yarpserver
       - yarprun
       - yarplogger
-      - run_components
-      - run_skills
-      - run_bt_executable_all
+      - run_bt_executable_monitored
       - ros2oracleIsPoiDone1FSM
       - gazebo
 
@@ -561,14 +570,12 @@ services:
       - yarpserver
       - yarprun
       - yarplogger
-      - run_components
-      - run_skills
-      - run_bt_executable_all
+      - run_bt_executable_monitored
       - ros2oracleSetPoi1FSM
       - gazebo
 
 
-  run_all:
+  run_all_monitors:
     image: ste93/convince:qt_6.7.3_ubuntu22.04_iron_stable_sim_completed
     <<: *base
     container_name: run_all 
@@ -600,3 +607,6 @@ services:
       - ros2oracleAlarmFSM
       - ros2oracleIsPoiDone1FSM
       - ros2oracleSetPoi1FSM
+
+
+  
