@@ -4,6 +4,7 @@
 #include <yarp/os/BufferedPort.h>
 #include <yarp/os/Bottle.h>
 #include <builtin_interfaces/msg/time.hpp>  
+#include <rosgraph_msgs/msg/Clock.hpp>
 
 class ClockRos2Publisher : public rclcpp::Node
 {
@@ -11,7 +12,7 @@ public:
     ClockRos2Publisher()
         : Node("clock_ros2_publisher")
     {
-        publisher_ = this->create_publisher<builtin_interfaces::msg::Time>("clock", 10);
+        publisher_ = this->create_publisher<rosgraph_msgs::msg::Clock>("clock_mon", 10);
         yarp::os::Network yarp;
         if (!yarp.checkNetwork())
         {
@@ -30,7 +31,7 @@ private:
         yarp::os::Bottle *input = yarp_port_.read(false);
         if (input != nullptr)
         {
-            auto message = builtin_interfaces::msg::Time();
+            auto message = rosgraph_msgs::msg::Clock();
             auto time_in_string = input->toString();
             // split second and nanosecond
             auto second = time_in_string.substr(0, time_in_string.find(" "));  
@@ -42,7 +43,7 @@ private:
         }
     }
 
-    rclcpp::Publisher<builtin_interfaces::msg::Time>::SharedPtr publisher_;
+    rclcpp::Publisher<rosgraph_msgs::msg::Clock>::SharedPtr publisher_;
     yarp::os::BufferedPort<yarp::os::Bottle> yarp_port_;
     rclcpp::TimerBase::SharedPtr timer_;
 };
