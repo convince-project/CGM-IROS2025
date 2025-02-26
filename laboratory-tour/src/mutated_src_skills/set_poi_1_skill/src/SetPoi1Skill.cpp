@@ -100,7 +100,7 @@ bool SetPoi1Skill::start(int argc, char*argv[])
               wait_succeded = false;
               break;
           } 
-          retries++;
+          retries--;
           if(retries == SERVICE_TIMEOUT) {
               RCLCPP_ERROR(rclcpp::get_logger("rclcpp"), "Timed out while waiting for the service 'SetPoi'.");
               wait_succeded = false;
