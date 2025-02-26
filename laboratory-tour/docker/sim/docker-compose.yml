@@ -391,6 +391,9 @@ services:
     
 ################################# Prop_test_intro #################################
   run_bt_executable_Prop_test_intro:
+
+################################# PROP2 #################################
+  run_bt_executable_prop2:
     image: ste93/convince:qt_6.7.3_ubuntu22.04_iron_stable_sim_completed
     <<: *base
     container_name: run_bt_executable_Prop_test_intro
