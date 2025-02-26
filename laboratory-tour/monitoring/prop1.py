@@ -29,7 +29,7 @@ def abstract_message(message):
     else:
         predicates['time'] = message['time']
 
-    if "service" in message and message['service'] == "AlarmSkill/tick":
+    if "topic" in message and 'AlarmSkill/tick_mon/_service_event' in message["topic"] :
         predicates['alarm'] = True
     
     if "topic" in message and "battery" in message['topic']:
