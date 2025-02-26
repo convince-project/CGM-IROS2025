@@ -13,8 +13,8 @@ monitors: # here we list the monitors we are going to generate
         - name: BatteryComponent/battery_level # name of the topic
           type: std_msgs.msg.Int32 
           action: log
-        - name: clock
-          type: rosgraph_msgs.msg.Clock
+        - name: clock_mon
+          type: builtin_interfaces.msg.Time
           action: log 
         - name: AlarmSkill/tick_mon/_service_event
           type: bt_interfaces_dummy.srv.TickAction_Event
