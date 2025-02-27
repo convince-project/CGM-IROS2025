@@ -176,8 +176,11 @@ int main(int argc, char* argv[])
         auto duration = std::chrono::duration_cast<std::chrono::microseconds>(time_end - time_start);
         std::cout << "Duration: " << duration.count() << std::endl;
         tick_cnt++;
-        average_time = (duration.count() + (tick_cnt - 1) * average_time) / tick_cnt;
-        std::cout << "Average time: " << average_time << "tick count" << tick_cnt << std::endl;
+        if (tick_cnt > 4)
+        {
+            average_time = (duration.count() + (tick_cnt - 1-4) * average_time) / tick_cnt-4;
+            std::cout << "Average time: " << average_time << "tick count" << tick_cnt << std::endl;
+        }
         std::this_thread::sleep_for (std::chrono::milliseconds(1000));
     }
 
