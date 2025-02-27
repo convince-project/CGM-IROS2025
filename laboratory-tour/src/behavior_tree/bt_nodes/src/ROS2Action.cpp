@@ -66,9 +66,12 @@ BT::NodeStatus ROS2Action::tick()
     auto status = sendTickToSkill();
     auto time_end = std::chrono::high_resolution_clock::now();
     auto duration = std::chrono::duration_cast<std::chrono::microseconds>(time_end - time_start);
-    m_average_time = (m_average_time * m_tick_count + duration.count()) / (m_tick_count + 1);
     m_tick_count++;
-    RCLCPP_INFO(rclcpp::get_logger("rclcpp"), "Node %s average tick time %f, number of tick %d", ActionNodeBase::name().c_str(), m_average_time, m_tick_count);
+    if (m_tick_count > 4)
+    {
+        m_average_time = (duration.count() + (m_tick_count - 1-4) * m_average_time) / m_tick_count-4;
+        RCLCPP_INFO(rclcpp::get_logger("rclcpp"), "Node %s average tick time %f, number of tick %d", ActionNodeBase::name().c_str(), m_average_time, m_tick_count);
+    }
     switch (status) {
         case message.SKILL_RUNNING:
             return BT::NodeStatus::RUNNING;
