@@ -52,7 +52,7 @@
 
     <module>
         <name>ros2</name>
-        <parameters>run set_poi1_skill_mutated_monitored set_poi1_skill_mutated_monitored</parameters>
+        <parameters>run set_poi1_skill_mutated set_poi1_skill_mutated</parameters>
         <workdir />
         <node>bt</node>
     </module>
