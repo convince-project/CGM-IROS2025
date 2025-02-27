@@ -178,7 +178,7 @@ int main(int argc, char* argv[])
         tick_cnt++;
         if (tick_cnt > 4)
         {
-            average_time = (duration.count() + (tick_cnt - 1-4) * average_time) / tick_cnt-4;
+            average_time = (duration.count() + (tick_cnt - 1-4) * average_time) / (tick_cnt-4);
             std::cout << "Average time: " << average_time << "tick count" << tick_cnt << std::endl;
         }
         std::this_thread::sleep_for (std::chrono::milliseconds(1000));
