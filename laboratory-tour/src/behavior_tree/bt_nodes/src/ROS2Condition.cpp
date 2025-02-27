@@ -97,7 +97,7 @@ BT::NodeStatus ROS2Condition::tick()
     auto duration = std::chrono::duration_cast<std::chrono::microseconds>(time_end - time_start);
     m_average_time = (m_average_time * m_tick_count + duration.count()) / (m_tick_count + 1);
     m_tick_count++;
-    RCLCPP_INFO(rclcpp::get_logger("rclcpp"), "Node %s average tick time %f", ConditionNode::name().c_str(), m_average_time);
+    RCLCPP_INFO(rclcpp::get_logger("rclcpp"), "Node %s average tick time %f, number of ticks %d", ConditionNode::name().c_str(), m_average_time, m_tick_count);
     switch (status) {
         case message.SKILL_SUCCESS:
             return BT::NodeStatus::SUCCESS;
