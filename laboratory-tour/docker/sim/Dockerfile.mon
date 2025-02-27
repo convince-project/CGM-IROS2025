@@ -53,7 +53,7 @@ python3 -m venv monitoring-python-env && \
 
 RUN echo "export PATH=\$PATH:/home/user1/Groot/build" >> ~/.bashrc
 
-RUN /bin/bash -c "echo 'updated on 202502261637' && \
+RUN /bin/bash -c "echo 'updated on 202502270952' && \
     source /opt/ros/iron/setup.bash && \
     cd /home/user1/ && \
     git clone https://github.com/convince-project/MOON.git -b dev/model-monitoring && \
@@ -100,7 +100,8 @@ RUN /bin/bash -c "source /opt/ros/iron/setup.bash && \
     python3 config_gen.py --monitor-ws-path /home/user1/UC3/laboratory-tour/monitoring/monitor_BatteryLevelSkill/src --oracle-address 127.0.0.1:8081 /home/user1/UC3/laboratory-tour/model-high-level/Skills/BatteryLevelSkill.scxml && \
     python3 config_gen.py --monitor-ws-path /home/user1/UC3/laboratory-tour/monitoring/monitor_AlarmSkill/src --oracle-address 127.0.0.1:8082 /home/user1/UC3/laboratory-tour/model-high-level/Skills/AlarmSkill.scxml && \
     python3 config_gen.py --monitor-ws-path /home/user1/UC3/laboratory-tour/monitoring/monitor_IsPoiDone1Skill/src --oracle-address 127.0.0.1:8083 /home/user1/UC3/laboratory-tour/model-high-level/Skills/IsPoiDone1Skill.scxml && \
-    python3 config_gen.py --monitor-ws-path /home/user1/UC3/laboratory-tour/monitoring/monitor_SetPoi1Skill/src --oracle-address 127.0.0.1:8084 /home/user1/UC3/laboratory-tour/model-high-level/Skills/SetPoi1Skill.scxml"
+    python3 config_gen.py --monitor-ws-path /home/user1/UC3/laboratory-tour/monitoring/monitor_SetPoi1Skill/src --oracle-address 127.0.0.1:8084 /home/user1/UC3/laboratory-tour/model-high-level/Skills/SetPoi1Skill.scxml && \
+    python3 config_gen.py --monitor-ws-path /home/user1/UC3/laboratory-tour/monitoring/monitor_SetCurrentPoiDoneSkill/src --oracle-address 127.0.0.1:8084 /home/user1/UC3/laboratory-tour/model-high-level/Skills/SetCurrentPoiDoneSkill.scxml"
 
 RUN /bin/bash -c "source /opt/ros/iron/setup.bash && \
     cd /home/user1/ROSMonitoring/generator/ros2_devel && \
@@ -118,6 +119,10 @@ RUN /bin/bash -c "source /opt/ros/iron/setup.bash && \
     cd /home/user1/ROSMonitoring/generator/ros2_devel && \
     /home/user1/monitoring-python-env/bin/python generator --config_file  /home/user1/MOON/ModelMonitor/config_generator/monitor_SetPoi1Skill.yaml && \
     cd /home/user1/UC3/laboratory-tour/monitoring/monitor_SetPoi1Skill/src && \
+    colcon build  && \
+    cd /home/user1/ROSMonitoring/generator/ros2_devel && \
+    /home/user1/monitoring-python-env/bin/python generator --config_file  /home/user1/MOON/ModelMonitor/config_generator/monitor_SetCurrentPoiDoneSkill.yaml && \
+    cd /home/user1/UC3/laboratory-tour/monitoring/monitor_SetCurrentPoiDoneSkill/src && \
     colcon build"
 
 
