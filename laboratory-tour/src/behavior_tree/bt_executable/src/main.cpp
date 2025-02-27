@@ -153,7 +153,7 @@ int main(int argc, char* argv[])
     // }
 
 
-    // uint64_t tick_cnt = 0;
+    uint64_t tick_cnt = 0;
     while(true)
     {
         // TODO is this only for debug/control? who receives this tick?
@@ -169,8 +169,14 @@ int main(int argc, char* argv[])
         // bargs.addInt64(static_cast<int64_t>(++tick_cnt));
         // auto& breply [[maybe_unused]] = msg.addList();
         // port.write(msg);
-
+        auto time_start = std::chrono::high_resolution_clock::now();
         tree.tickRoot();
+        auto time_end = std::chrono::high_resolution_clock::now();
+        auto duration = std::chrono::duration_cast<std::chrono::microseconds>(time_end - time_start);
+        std::cout << "Duration: " << duration.count() << std::endl;
+        tick_cnt++;
+        auto average_time = (duration.count() + (tick_cnt - 1) * average_time) / tick_cnt;
+        std::cout << "Average time: " << average_time << "tick count" << tick_cnt << std::endl;
         std::this_thread::sleep_for (std::chrono::milliseconds(1000));
     }
 
