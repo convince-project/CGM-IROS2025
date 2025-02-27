@@ -87,7 +87,7 @@ bool SetCurrentPoiDoneSkill::start(int argc, char*argv[])
   
   m_stateMachine.connectToEvent("SchedulerComponent.GetCurrentPoi.Call", [this]([[maybe_unused]]const QScxmlEvent & event){
       std::shared_ptr<rclcpp::Node> nodeGetCurrentPoi = rclcpp::Node::make_shared(m_name + "SkillNodeGetCurrentPoi");
-      std::shared_ptr<rclcpp::Client<scheduler_interfaces_dummy::srv::GetCurrentPoi>> clientGetCurrentPoi = nodeGetCurrentPoi->create_client<scheduler_interfaces_dummy::srv::GetCurrentPoi>("/SchedulerComponent/GetCurrentPoi");
+      std::shared_ptr<rclcpp::Client<scheduler_interfaces_dummy::srv::GetCurrentPoi>> clientGetCurrentPoi = nodeGetCurrentPoi->create_client<scheduler_interfaces_dummy::srv::GetCurrentPoi>("/SchedulerComponent/GetCurrentPoi_mon");
       auto request = std::make_shared<scheduler_interfaces_dummy::srv::GetCurrentPoi::Request>();
       auto eventParams = event.data().toMap();
       
@@ -133,7 +133,7 @@ bool SetCurrentPoiDoneSkill::start(int argc, char*argv[])
   });
   m_stateMachine.connectToEvent("BlackboardComponent.SetInt.Call", [this]([[maybe_unused]]const QScxmlEvent & event){
       std::shared_ptr<rclcpp::Node> nodeSetInt = rclcpp::Node::make_shared(m_name + "SkillNodeSetInt");
-      std::shared_ptr<rclcpp::Client<blackboard_interfaces_dummy::srv::SetIntBlackboard>> clientSetInt = nodeSetInt->create_client<blackboard_interfaces_dummy::srv::SetIntBlackboard>("/BlackboardComponent/SetInt");
+      std::shared_ptr<rclcpp::Client<blackboard_interfaces_dummy::srv::SetIntBlackboard>> clientSetInt = nodeSetInt->create_client<blackboard_interfaces_dummy::srv::SetIntBlackboard>("/BlackboardComponent/SetInt_mon");
       auto request = std::make_shared<blackboard_interfaces_dummy::srv::SetIntBlackboard::Request>();
       auto eventParams = event.data().toMap();
       
