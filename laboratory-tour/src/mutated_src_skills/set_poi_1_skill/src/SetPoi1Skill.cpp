@@ -100,7 +100,7 @@ bool SetPoi1Skill::start(int argc, char*argv[])
               wait_succeded = false;
               break;
           } 
-          retries--;
+          retries++;
           if(retries == SERVICE_TIMEOUT) {
               RCLCPP_ERROR(rclcpp::get_logger("rclcpp"), "Timed out while waiting for the service 'SetPoi'.");
               wait_succeded = false;
@@ -173,7 +173,7 @@ void SetPoi1Skill::tick( [[maybe_unused]] const std::shared_ptr<bt_interfaces_du
   m_tickResult.store(Status::undefined);
   m_stateMachine.submitEvent("CMD_TICK");
   
-  while(m_tickResult.load()== Status::undefined) {
+  while(m_tickResult.load()>= Status::undefined) {
       std::this_thread::sleep_for (std::chrono::milliseconds(100));
   }
   switch(m_tickResult.load()) 
