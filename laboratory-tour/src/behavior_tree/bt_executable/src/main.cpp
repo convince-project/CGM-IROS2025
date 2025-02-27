@@ -154,6 +154,7 @@ int main(int argc, char* argv[])
 
 
     uint64_t tick_cnt = 0;
+    float average_time = 0;
     while(true)
     {
         // TODO is this only for debug/control? who receives this tick?
@@ -175,7 +176,7 @@ int main(int argc, char* argv[])
         auto duration = std::chrono::duration_cast<std::chrono::microseconds>(time_end - time_start);
         std::cout << "Duration: " << duration.count() << std::endl;
         tick_cnt++;
-        auto average_time = (duration.count() + (tick_cnt - 1) * average_time) / tick_cnt;
+        average_time = (duration.count() + (tick_cnt - 1) * average_time) / tick_cnt;
         std::cout << "Average time: " << average_time << "tick count" << tick_cnt << std::endl;
         std::this_thread::sleep_for (std::chrono::milliseconds(1000));
     }
