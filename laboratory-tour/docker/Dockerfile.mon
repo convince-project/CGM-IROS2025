@@ -53,7 +53,7 @@ python3 -m venv monitoring-python-env && \
 
 RUN echo "export PATH=\$PATH:/home/user1/Groot/build" >> ~/.bashrc
 
-RUN /bin/bash -c "echo 'updated on 202502270952' && \
+RUN /bin/bash -c "echo 'updated on 2025023061457' && \
     source /opt/ros/iron/setup.bash && \
     cd /home/user1/ && \
     git clone https://github.com/convince-project/MOON.git -b dev/model-monitoring && \
