@@ -1,8 +1,8 @@
 <h1 align="center">
-    Convince Behavior trees
+    IROS 2025 - Code Generation and Monitoring for Deliberation Components in Autonomous Robots
 </h1>
 
-<p align="center"><img src="assets/image.png" alt=""/></p>
+<!-- <p align="center"><img src="assets/image.png" alt=""/></p> -->
 <!-- 
 <div align="center">
   Journal, vol. X, no. y, pp. abc-def, Month Year
@@ -17,16 +17,16 @@
 
 ## Table of Contents
 
-- [Update](#updates)
+<!-- - [Update](#updates) -->
 <!-- - [Installation](#installation) -->
 - [Reproduce the results](#reproduce-the-paper-results)
-- [Run the code with custom data](#run-the-code-with-custom-data-optional)
+<!-- - [Run the code with custom data](#run-the-code-with-custom-data-optional)
 - [License](#license)
-- [Citing this paper](#citing-this-paper)
+- [Citing this paper](#citing-this-paper) -->
 
 ## Updates
 
-2024-01-26 added simple example working
+2025-03-17 added working example
 
 <!-- ## Installation
 
@@ -35,13 +35,21 @@
 ```
 :warning: In this section it would be good to provide the user with all the information necessary to install the correct dependencies, with the correct versions. If the dependencies are built from sources, indicating a specific commit/tag represents an alternative to specifying the version. -->
 
-### Execution inside a container (alternative)
+<!-- ### Execution inside a container (alternative)
 
-look in the specific folders
+look in the specific folders -->
+ ## Reproduce the paper results
 
-<!-- ## Reproduce the paper results
+ to run the code you need docker installed 
 
-Before running the experiments, it is suggested to run the following sanity checks to make sure that the environment is properly configure:
+ then 
+ ```
+ cd laboratory-tour/docker
+ docker compose pull
+ docker compose up environment 
+ ```
+after this you need to 
+<!--Before running the experiments, it is suggested to run the following sanity checks to make sure that the environment is properly configure:
 
 ```console
 <all the instructions required to check that the environent has been configured properly>
