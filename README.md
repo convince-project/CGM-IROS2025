@@ -17,12 +17,12 @@
 
 ## Table of Contents
 
-<!-- - [Update](#updates) -->
+- [Updates](#updates)
 <!-- - [Installation](#installation) -->
 - [Reproduce the results](#reproduce-the-paper-results)
-<!-- - [Run the code with custom data](#run-the-code-with-custom-data-optional)
+<!-- - [Run the code with custom data](#run-the-code-with-custom-data-optional) -->
 - [License](#license)
-- [Citing this paper](#citing-this-paper) -->
+<!-- - [Citing this paper](#citing-this-paper) -->
 
 ## Updates
 
@@ -46,6 +46,7 @@ look in the specific folders -->
  ```
  cd laboratory-tour/docker
  docker compose pull
+ sudo xhost +
  docker compose up environment 
  ```
 after this you need to 
