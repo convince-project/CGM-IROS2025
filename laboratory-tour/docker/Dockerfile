@@ -30,18 +30,9 @@ RUN /bin/bash -c "git clone --recurse-submodules https://github.com/BehaviorTree
 
 USER user1
 
-#add fakeNavigation device
 WORKDIR ${robotology_install_folder}
 
-# RUN /bin/bash -c "cd /home/user1 && \
-#     sudo apt install maven openjdk-21-jdk -y && \
-#     git clone https://github.com/apache/commons-scxml.git && \
-#     cd commons-scxml && \
-#     mvn && \
-#     mvn org.apache.maven.plugins:maven-install-plugin:2.5.2:install-file -Dfile=target/commons-scxml2-2.0-SNAPSHOT.jar"
-
-
-
+#add fakeNavigation device
 RUN cd yarp && \
     git remote add ste93 https://github.com/ste93/yarp && \
     git fetch ste93 && \
@@ -103,8 +94,6 @@ RUN /bin/bash -c "source /opt/ros/iron/setup.bash && \
 USER user1
 RUN /bin/bash -c "curl https://sh.rustup.rs -sSf | sh -s -- -y"
 
-# curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs -y| sh "
-
 RUN /bin/bash -c "source /home/user1/.cargo/env && cargo install --git https://github.com/convince-project/scan"
 
 RUN /bin/bash -c "sudo apt install gobject-introspection libgirepository1.0-dev -y"
@@ -127,55 +116,8 @@ RUN /bin/bash -c "echo 'updated on 202503191154' && \
 
 
 RUN echo "source /home/user1/UC3/laboratory-tour/install/setup.bash" >> ~/.bashrc
-# 
-
-# RUN /bin/bash -c "source /opt/ros/iron/setup.bash && \
-#     cd /home/user1/ROSMonitoring/generator/ros2_devel && \
-#     /home/user1/monitoring-python-env/bin/python generator --config_file /home/user1/UC3/laboratory-tour/monitoring/monitor_prop1.yaml && \
-#     /home/user1/monitoring-python-env/bin/python generator --config_file /home/user1/UC3/laboratory-tour/monitoring/monitor_prop2.yaml && \
-#     /home/user1/monitoring-python-env/bin/python generator --config_file /home/user1/UC3/laboratory-tour/monitoring/monitor_prop3.yaml && \
-#     /home/user1/monitoring-python-env/bin/python generator --config_file /home/user1/UC3/laboratory-tour/monitoring/monitor_prop4.yaml && \
-#     /home/user1/monitoring-python-env/bin/python generator --config_file /home/user1/UC3/laboratory-tour/monitoring/monitor_prop5.yaml && \
-#     /home/user1/monitoring-python-env/bin/python generator --config_file /home/user1/UC3/laboratory-tour/monitoring/monitor_test_intro.yaml && \
-#     cd /home/user1/UC3/laboratory-tour/monitoring/monitor_prop1_ws/src/ && \
-#     colcon build && \
-#     cd /home/user1/UC3/laboratory-tour/monitoring/monitor_prop2_ws/src/ && \
-#     colcon build && \
-#     cd /home/user1/UC3/laboratory-tour/monitoring/monitor_prop3_ws/src/ && \
-#     colcon build && \
-#     cd /home/user1/UC3/laboratory-tour/monitoring/monitor_prop4_ws/src/ && \
-#     colcon build && \
-#     cd /home/user1/UC3/laboratory-tour/monitoring/monitor_test_intro_ws/src/ && \
-#     colcon build && \
-#     cd /home/user1/UC3/laboratory-tour/monitoring/monitor_prop5_ws/src/ && \
-#     colcon build"
-
-
-
-# RUN /bin/bash -c "source /opt/ros/iron/setup.bash && \
-#     cd /home/user1/ && \
-#     git clone https://github.com/convince-project/MOON.git -b dev/model-monitoring && \
-#     cd /home/user1/MOON/ModelMonitor/modeloracle && \
-#     mvn install"
-
-
-# RUN /bin/bash -c "source /opt/ros/iron/setup.bash && \
-#     cd /home/user1/MOON/ModelMonitor/config_generator && \
-#     python3 config_gen.py --monitor-ws-path /home/user1/UC3/laboratory-tour/monitoring/monitor_skill_battery/src --oracle-address 127.0.0.1:8081 /home/user1/UC3/laboratory-tour/model-high-level/Skills/BatteryLevelSkill.scxml"
-
-# RUN /bin/bash -c "source /opt/ros/iron/setup.bash && \
-#     cd /home/user1/ROSMonitoring/generator/ros2_devel && \
-#     /home/user1/monitoring-python-env/bin/python generator --config_file  /home/user1/MOON/ModelMonitor/config_generator/monitor_BatteryLevelSkill.yaml && \
-#     cd /home/user1/UC3/laboratory-tour/monitoring/monitor_skill_battery/src && \
-#     colcon build"
-
-
-# as2fm_scxml_to_jani --generated-scxml-dir model_low_level_dir main.xml
 
 ENV PATH=${PATH}:/home/user1/.local/bin
 
 ENV LD_LIBRARY_PATH=${LD_LIBRARY_PATH}:/usr/local/src/robot/yarp/build/lib/
-
-
-# mvn exec:java -Dexec.mainClass=io.github.convince.moon.Oracle -Dexec.args="--ioshape /home/user1/MOON/ModelMonitor/config_generator/BatteryLevelSkill_ioshape.json --statemachine /home/user1/UC3/laboratory-tour/model_scxml/BatteryLevelSkill.scxml --address 127.0.0.1:8081"
 

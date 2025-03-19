@@ -79,20 +79,11 @@ RUN /bin/bash -c "source /opt/ros/iron/setup.bash && \
     /home/user1/monitoring-python-env/bin/python generator --config_file /home/user1/UC3/laboratory-tour/monitoring/monitor_prop1.yaml && \
     /home/user1/monitoring-python-env/bin/python generator --config_file /home/user1/UC3/laboratory-tour/monitoring/monitor_prop2.yaml && \
     /home/user1/monitoring-python-env/bin/python generator --config_file /home/user1/UC3/laboratory-tour/monitoring/monitor_prop3.yaml && \
-    /home/user1/monitoring-python-env/bin/python generator --config_file /home/user1/UC3/laboratory-tour/monitoring/monitor_prop4.yaml && \
-    /home/user1/monitoring-python-env/bin/python generator --config_file /home/user1/UC3/laboratory-tour/monitoring/monitor_prop5.yaml && \
-    /home/user1/monitoring-python-env/bin/python generator --config_file /home/user1/UC3/laboratory-tour/monitoring/monitor_test_intro.yaml && \
     cd /home/user1/UC3/laboratory-tour/monitoring/monitor_prop1_ws/src/ && \
     colcon build && \
     cd /home/user1/UC3/laboratory-tour/monitoring/monitor_prop2_ws/src/ && \
     colcon build && \
     cd /home/user1/UC3/laboratory-tour/monitoring/monitor_prop3_ws/src/ && \
-    colcon build && \
-    cd /home/user1/UC3/laboratory-tour/monitoring/monitor_prop4_ws/src/ && \
-    colcon build && \
-    cd /home/user1/UC3/laboratory-tour/monitoring/monitor_test_intro_ws/src/ && \
-    colcon build && \
-    cd /home/user1/UC3/laboratory-tour/monitoring/monitor_prop5_ws/src/ && \
     colcon build"
 
 
@@ -126,13 +117,9 @@ RUN /bin/bash -c "source /opt/ros/iron/setup.bash && \
     cd /home/user1/UC3/laboratory-tour/monitoring/monitor_SetCurrentPoiDoneSkill/src && \
     colcon build"
 
-
-# as2fm_scxml_to_jani --generated-scxml-dir model_low_level_dir main.xml
-
 ENV PATH=${PATH}:/home/user1/.local/bin
 
 ENV LD_LIBRARY_PATH=${LD_LIBRARY_PATH}:/usr/local/src/robot/yarp/build/lib/
 
 
-# mvn exec:java -Dexec.mainClass=io.github.convince.moon.Oracle -Dexec.args="--ioshape /home/user1/MOON/ModelMonitor/config_generator/BatteryLevelSkill_ioshape.json --statemachine /home/user1/UC3/laboratory-tour/model_scxml/BatteryLevelSkill.scxml --address 127.0.0.1:8081"
 
