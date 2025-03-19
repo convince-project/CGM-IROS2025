@@ -64,7 +64,8 @@ RUN /bin/bash -c "echo 'updated on 2025023061457' && \
 RUN /bin/bash -c "echo 'updated on 202502261927' && \
     source /opt/ros/iron/setup.bash && \
     cd /home/user1 && \
-    git clone https://github.com/convince-project/UC3.git -b  dev/IROS2025 && \
+    git clone https://github.com/convince-project/CGM-IROS2025.git && \
+    mv CGM-IROS2025 UC3 && \
     source /opt/ros/iron/setup.bash && \
     cd /home/user1/UC3/laboratory-tour/ && \
     colcon build --base-paths src/* --packages-ignore face_expressions_wrapper dialog_component"

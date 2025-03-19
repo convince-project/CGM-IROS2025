@@ -42,7 +42,11 @@ WORKDIR ${robotology_install_folder}
 
 
 
-RUN cd yarp && cd build && \
+RUN cd yarp && \
+    git remote add ste93 https://github.com/ste93/yarp && \
+    git fetch ste93 && \
+    git checkout ste93/test/yarpmanager/default_app && \
+    cd build && \
     cmake .. \
     -DCMAKE_BUILD_TYPE=Release \
     -DYARP_COMPILE_libYARP_math=ON \
@@ -103,11 +107,11 @@ RUN /bin/bash -c "curl https://sh.rustup.rs -sSf | sh -s -- -y"
 
 RUN /bin/bash -c "source /home/user1/.cargo/env && cargo install --git https://github.com/convince-project/scan"
 
-RUN /bin/bash -c "sudo apt install gobject-introspection libgirepository1.0-dev -y && \
-cd /home/user1/ && \
+RUN /bin/bash -c "sudo apt install gobject-introspection libgirepository1.0-dev -y"
+RUN /bin/bash -c "cd /home/user1/ && \
 python3 -m venv monitoring-python-env && \
 /home/user1/monitoring-python-env/bin/pip install --upgrade pip && \
-/home/user1/monitoring-python-env/bin/pip install websocket_client rospy_message_converter pyyaml reelay jedi pycairo PyGObject prompt_toolkit"
+/home/user1/monitoring-python-env/bin/pip install websocket_client rospy_message_converter pyyaml reelay jedi pycairo PyGObject==3.50.0 prompt_toolkit"
 
 
 RUN echo "export PATH=\$PATH:/home/user1/Groot/build" >> ~/.bashrc
@@ -115,7 +119,8 @@ RUN echo "export PATH=\$PATH:/home/user1/Groot/build" >> ~/.bashrc
 RUN /bin/bash -c "echo 'updated on 2025023061457' && \
     source /opt/ros/iron/setup.bash && \
     cd /home/user1 && \
-    git clone https://github.com/convince-project/UC3.git -b  dev/IROS2025 && \
+    git clone https://github.com/convince-project/CGM-IROS2025.git && \
+    mv CGM-IROS2025 UC3 && \
     source /opt/ros/iron/setup.bash && \
     cd /home/user1/UC3/laboratory-tour/ && \
     colcon build --base-paths src/* --packages-ignore face_expressions_wrapper dialog_component"

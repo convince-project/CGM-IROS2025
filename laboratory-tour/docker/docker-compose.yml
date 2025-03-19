@@ -78,7 +78,7 @@ services:
     image: ste93/convince:qt_6.7.3_ubuntu22.04_iron_stable_sim_completed_iros
     <<: *base
     container_name: yarpmanager
-    command: bash -c "yarp conf 172.17.0.1 10000; yarp wait $${YARP_NAMESPACE}; yarpmanager"
+    command: bash -c "yarp conf 172.17.0.1 10000; yarp wait $${YARP_NAMESPACE}; yarpmanager --load_application /home/user1/UC3/laboratory-tour/launch/applications/Navigation_ROS2_R1_SIM.xml"
     depends_on:
       - yarpserver
       - gazebo
