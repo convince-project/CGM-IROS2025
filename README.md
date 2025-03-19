@@ -49,7 +49,31 @@ look in the specific folders -->
  sudo xhost +
  docker compose up environment 
  ```
-after this you need to 
+after this some windows will open, you need to find yarpmanager:
+<img src="assets/yarpmanager_not_started.png" width="1700">
+then, after gazebo is started, start all the application from 0, leaving 2 or 3 seconds after each (it needs to be green)
+
+after that you will be in this situation:
+
+<img src="assets/yarpmanager_started.png" width="1700">
+
+once started, you need to go back to the terminal and start the oracles. 
+
+```
+docker compose up run_oracles
+```
+
+then wait 30 seconds till the oracles starts correctly
+
+after that start the system 
+
+```
+docker compose up run_all_monitors
+```
+
+-----------------------------------
+
+if you want to run the tests
 <!--Before running the experiments, it is suggested to run the following sanity checks to make sure that the environment is properly configure:
 
 ```console
