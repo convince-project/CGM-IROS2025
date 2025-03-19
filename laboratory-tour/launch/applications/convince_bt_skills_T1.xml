@@ -9,7 +9,7 @@
     </module>
     <module>
         <name>ros2</name>
-        <parameters>run battery_level_skill_fault2 battery_level_skill_fault2</parameters>
+        <parameters>run battery_level_skill_fault1 battery_level_skill_fault1</parameters>
         <workdir />
         <node>bt</node>
     </module>

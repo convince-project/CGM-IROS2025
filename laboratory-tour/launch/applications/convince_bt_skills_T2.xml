@@ -52,7 +52,7 @@
 
     <module>
         <name>ros2</name>
-        <parameters>run set_poi1_skill_fault2 set_poi1_skill_fault2</parameters>
+        <parameters>run set_poi1_skill_monitored_fault1 set_poi1_skill_monitored_fault1</parameters>
         <workdir />
         <node>bt</node>
     </module>
