@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<scxml initial="idle" version="1.0" name="BatteryLevelSkillCondition" datamodel="ecmascript" xmlns="http://www.w3.org/2005/07/scxml">
+    <datamodel>
+        <data id="percentage" expr="100"/>
+        <data id="SKILL_SUCCESS" expr="0"/>
+        <data id="SKILL_FAILURE" expr="1"/>
+        <data id="m_probability" expr="1"/>
+    </datamodel>
+    <!-- BatteryLevelSkill is a server for tick from the ROS2Condition plugin-->
+    <!-- BatteryLevelSkill is a subscriber for the /battery_level topic from the BatteryComponent-->
+    <state id="idle">
+        <onentry>
+            <log expr="&apos;State idle&apos;"/>
+            <assign location="m_probability" expr="Math.random()"/>
+            <log expr="m_probability"/>
+        </onentry>
+        <transition target="checkLevel" event="CMD_TICK"/>
+        <transition target="idle" event="BatteryComponent.battery_level.Sub">
+            <assign location="percentage" expr="_event.data.percentage"/>
+        </transition>
+    </state>
+    <state id="checkLevel">
+        <onentry>
+            <log expr="&apos;State checkLevel&apos;"/>
+            <if cond="percentage &gt; 30">
+                <if cond="m_probability &gt; 0.5">
+                    <send event="TICK_RESPONSE">
+                        <param name="status" expr="SKILL_SUCCESS"/>
+                        <param name="is_ok" expr="true"/>
+                    </send>
+                <else/>
+                    <send event="TICK_RESPONSE">
+                        <param name="status" expr="SKILL_FAILURE"/>
+                        <param name="is_ok" expr="true"/>
+                    </send>
+                </if>
+            <else/>
+                <send event="TICK_RESPONSE">
+                    <param name="status" expr="SKILL_FAILURE"/>
+                    <param name="is_ok" expr="true"/>
+                </send>
+            </if>
+        </onentry>
+        <transition target="checkLevel" event="CMD_TICK"/>
+        <transition target="idle"/>
+    </state>
+</scxml>
+
