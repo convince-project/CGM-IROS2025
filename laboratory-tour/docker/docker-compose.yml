@@ -181,7 +181,7 @@ services:
               source /usr/local/src/robot/yarp-devices-ros2/ros2_interfaces_ws/install/setup.bash && \
               source $${UC3_DIR}/install/setup.bash && \
               yarp conf 172.17.0.1 10000; yarp wait $${YARP_NAMESPACE}; \
-              yarpmanager-console --application $${UC3_DIR}/launch/applications/convince_bt_skills_monitoredt.xml --exit --run --connect"
+              yarpmanager-console --application $${UC3_DIR}/launch/applications/convince_bt_skills_monitored.xml --exit --run --connect"
     depends_on:
       - yarpserver
       - yarprun
@@ -214,6 +214,7 @@ services:
       - yarpserver
       - yarprun
       - yarplogger
+      - run_skills_monitored
       - run_components
 
 
