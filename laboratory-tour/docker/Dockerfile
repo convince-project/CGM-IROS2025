@@ -105,7 +105,7 @@ python3 -m venv monitoring-python-env && \
 
 RUN echo "export PATH=\$PATH:/home/user1/Groot/build" >> ~/.bashrc
 
-RUN /bin/bash -c "echo 'updated on 202503191154' && \
+RUN /bin/bash -c "echo 'updated on 202503191430' && \
     source /opt/ros/iron/setup.bash && \
     cd /home/user1 && \
     git clone https://github.com/convince-project/CGM-IROS2025.git && \

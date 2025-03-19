@@ -247,25 +247,6 @@ services:
               cd $${UC3_DIR}/monitoring && \
               python3 /home/user1/ROSMonitoring/oracle/TLOracle/oracle.py --port 8093 --online --dense --property prop3"
 
-  ros2oracleProp4:
-    image: ste93/convince:qt_6.7.3_ubuntu22.04_iron_stable_sim_monitoring_iros
-    <<: *base
-    container_name: ros2oracleProp4
-    command: bash -c "source /opt/ros/iron/setup.bash && \
-              source $${UC3_DIR}/install/setup.bash && \
-              cd $${UC3_DIR}/monitoring && \
-              python3 /home/user1/ROSMonitoring/oracle/TLOracle/oracle.py --port 8094 --online --dense --property prop4"
-
-  ros2oracleProp5:
-    image: ste93/convince:qt_6.7.3_ubuntu22.04_iron_stable_sim_monitoring_iros
-    <<: *base
-    container_name: ros2oracleProp5
-    command: bash -c "source /opt/ros/iron/setup.bash && \
-              source $${UC3_DIR}/install/setup.bash && \
-              cd $${UC3_DIR}/monitoring && \
-              python3 /home/user1/ROSMonitoring/oracle/TLOracle/oracle.py --port 8095 --online --dense --property prop5"
-
-
   ros2oracleBatteryLevelFSM:
     image: ste93/convince:qt_6.7.3_ubuntu22.04_iron_stable_sim_monitoring_iros
     <<: *base
@@ -357,42 +338,6 @@ services:
       - yarplogger
       - gazebo
 
-  
-  ros2monitorProp4:
-    image: ste93/convince:qt_6.7.3_ubuntu22.04_iron_stable_sim_monitoring_iros
-    <<: *base
-    container_name: ros2monitorProp4
-    command: bash -c "source /opt/ros/iron/setup.bash && \
-              source $${UC3_DIR}/install/setup.bash && \
-              cd $${UC3_DIR}/monitoring/monitor_prop4_ws/src/ && \
-              source install/setup.bash && \
-              ros2 launch monitor/launch/monitor.launch"
-    depends_on:
-      - ros2oracleProp4
-      - terminator
-      - yarpserver
-      - yarprun
-      - yarplogger
-      - gazebo
-
-
-  ros2monitorProp5:
-    image: ste93/convince:qt_6.7.3_ubuntu22.04_iron_stable_sim_monitoring_iros
-    <<: *base
-    container_name: ros2monitorProp5
-    command: bash -c "source /opt/ros/iron/setup.bash && \
-              source $${UC3_DIR}/install/setup.bash && \
-              cd $${UC3_DIR}/monitoring/monitor_prop5_ws/src/ && \
-              source install/setup.bash && \
-              ros2 launch monitor/launch/monitor.launch"
-    depends_on:
-      - ros2oracleProp5
-      - terminator
-      - yarpserver
-      - yarprun
-      - yarplogger
-      - gazebo
-
 
   ros2monitorBatteryLevelFSM:
     image: ste93/convince:qt_6.7.3_ubuntu22.04_iron_stable_sim_monitoring_iros
@@ -473,8 +418,6 @@ services:
       - ros2monitorProp1
       - ros2monitorProp2
       - ros2monitorProp3
-      - ros2monitorProp4
-      - ros2monitorProp5
       - ros2monitorBatteryLevelFSM
       - ros2monitorAlarmFSM
       - ros2monitorIsPoiDone1FSM
@@ -490,8 +433,6 @@ services:
       - ros2oracleProp1
       - ros2oracleProp2
       - ros2oracleProp3
-      - ros2oracleProp4
-      - ros2oracleProp5
       - ros2oracleBatteryLevelFSM
       - ros2oracleAlarmFSM
       - ros2oracleIsPoiDone1FSM
