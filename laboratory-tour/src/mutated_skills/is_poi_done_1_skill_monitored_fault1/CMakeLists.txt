@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.16)
-project(battery_level_skill_fault3)
+project(is_poi_done1_skill_monitored_fault1)
 # set(CMAKE_CXX_STANDARD 20)
 # set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
@@ -12,6 +12,7 @@ find_package(rclcpp REQUIRED)
 find_package(std_msgs REQUIRED)
 find_package(bt_interfaces_dummy REQUIRED)
 
+find_package(blackboard_interfaces_dummy REQUIRED)
 find_package(Qt6 COMPONENTS Core Scxml StateMachine  REQUIRED)
 
 add_executable(${PROJECT_NAME} )
@@ -29,6 +30,7 @@ ament_target_dependencies(${PROJECT_NAME}
   std_msgs
   bt_interfaces_dummy 
   rclcpp 
+  blackboard_interfaces_dummy 
   
   )
 target_link_libraries(${PROJECT_NAME} Qt6::Core Qt6::Scxml Qt6::StateMachine)
@@ -38,8 +40,8 @@ target_include_directories(${PROJECT_NAME}
     $<INSTALL_INTERFACE:include>)
 target_sources( ${PROJECT_NAME} PRIVATE
   ${CMAKE_CURRENT_SOURCE_DIR}/src/main.cpp 
-  ${CMAKE_CURRENT_SOURCE_DIR}/src/BatteryLevelSkill.cpp 
-  ${CMAKE_CURRENT_SOURCE_DIR}/include/BatteryLevelSkill.h
+  ${CMAKE_CURRENT_SOURCE_DIR}/src/IsPoiDone1Skill.cpp 
+  ${CMAKE_CURRENT_SOURCE_DIR}/include/IsPoiDone1Skill.h
   )
 
 
@@ -56,6 +58,6 @@ if(BUILD_TESTING)
   set(ament_cmake_cpplint_FOUND TRUE)
   ament_lint_auto_find_test_dependencies()
 endif()
-qt6_add_statecharts(${PROJECT_NAME} ${CMAKE_CURRENT_SOURCE_DIR}/src/BatteryLevelSkillSM.scxml)
+qt6_add_statecharts(${PROJECT_NAME} ${CMAKE_CURRENT_SOURCE_DIR}/src/IsPoiDone1SkillSM.scxml)
 
 ament_package()
