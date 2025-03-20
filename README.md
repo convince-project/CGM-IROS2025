@@ -25,13 +25,18 @@
  sudo xhost +
  docker compose up environment 
  ```
+The first thing you need to check is that gazebo should start correctly, you need to see a window like this one:
+<img src="assets/gazebo.png" width="1200">
+
+
+
 after this some windows will open, you need to find yarpmanager:
-<img src="assets/yarpmanager_not_started.png" width="1700">
-then, after gazebo is started, start all the application from 0, leaving 2 or 3 seconds after each (it needs to be green)
+<img src="assets/yarpmanager_not_started.png" width="1200">
+then start all the application from 0, leaving 2 or 3 seconds after each (it needs to be green)
 
 after that you will be in this situation:
 
-<img src="assets/yarpmanager_started.png" width="1700">
+<img src="assets/yarpmanager_started.png" width="1200">
 
 once started, you need to go back to the terminal and start the oracles. 
 
@@ -49,33 +54,97 @@ docker compose up run_all_monitors
 
 -----------------------------------
 
-if you want to run the tests, edit line 184 of `docker-compose.yml` with one of the following
 
-|**test in paper**|**line to put**|
-|:---:|:---:|
-|T1|`yarpmanager-console --application $${UC3_DIR}/launch/applications/convince_bt_skills_T1.xml --exit --run --connect"`|
-|T2|`yarpmanager-console --application $${UC3_DIR}/launch/applications/convince_bt_skills_T2.xml --exit --run --connect"`|
-|T3|`yarpmanager-console --application $${UC3_DIR}/launch/applications/convince_bt_skills_T3.xml --exit --run --connect"`|
-|T4|`yarpmanager-console --application $${UC3_DIR}/launch/applications/convince_bt_skills_T4.xml --exit --run --connect"`|
-|T5|`yarpmanager-console --application $${UC3_DIR}/launch/applications/convince_bt_skills_T5.xml --exit --run --connect"`|
-|T6|`yarpmanager-console --application $${UC3_DIR}/launch/applications/convince_bt_skills_T6.xml --exit --run --connect"`|
-
-and then run all as above.
-
-to see the results of the monitors:
+to drop the battery level below 30% you need to type in the terminal that prompts from the docker:
 
 ```
- cd laboratory-tour/docker
+yarp rpc /fakeBattery/rpc
+
 ```
-then based on the test:
-|**test in paper**|**line to put**|
+
+and then in the prompt:
+
+```
+setBatteryCharge 22
+```
+
+ ### Monitor Results
+
+ to see the results of the monitor, from the `laboratory-tour/docker` folder run the following commands:
+
+ |**Monitor**|**line to put**|
 |:---:|:---:|
-|T1|yarpmanager-console --application $${UC3_DIR}/launch/applications/convince_bt_skills_T1.xml --exit --run --connect"|
-|T2|yarpmanager-console --application $${UC3_DIR}/launch/applications/convince_bt_skills_T2.xml --exit --run --connect"|
-|T3|yarpmanager-console --application $${UC3_DIR}/launch/applications/convince_bt_skills_T3.xml --exit --run --connect"|
-|T4|yarpmanager-console --application $${UC3_DIR}/launch/applications/convince_bt_skills_T4.xml --exit --run --connect"|
-|T5|yarpmanager-console --application $${UC3_DIR}/launch/applications/convince_bt_skills_T5.xml --exit --run --connect"|
-|T6|yarpmanager-console --application $${UC3_DIR}/launch/applications/convince_bt_skills_T6.xml --exit --run --connect"|
+|Monitor Property 1| docker logs --follow ros2monitorProp1 |
+|Monitor Property 2| docker logs --follow ros2monitorProp2 |
+|Monitor Property 3| docker logs --follow ros2monitorProp3 |
+|Model Monitor Alarm Skill | docker logs --follow ros2oracleAlarmFSM|
+|Model Monitor Battery Level Skill| docker logs --follow ros2oracleBatteryLevelFSM |
+|Model Monitor Is Poi Done 1 Skill| docker logs --follow ros2oracleIsPoiDone1FSM |
+|Model Monitor Set Poi 1 Skill| docker logs --follow ros2oracleSetPoi1FSM |
+
+
+ ### Tests as in Paper
+
+ #### T1
+ 
+ Edit line 184 of `docker-compose.yml` with:
+
+```yarpmanager-console --application $${UC3_DIR}/launch/applications/convince_bt_skills_T1.xml --exit --run --connect"```
+
+then run all as above, and once done you should see in the `Model Monitor Battery Level Skill` a **Timed Out** log that means it hasn't received the expected message.
+
+Instead once you drop the battery level you should see in the `Monitor Property 2` a **"verdict": "currently_false"** that means it has an inconsistency.
+
+
+#### T2
+
+
+ Edit line 184 of `docker-compose.yml` with:
+
+```yarpmanager-console --application $${UC3_DIR}/launch/applications/convince_bt_skills_T2.xml --exit --run --connect"```
+
+then run all as above, and once done you should see in the `Model Monitor Set Poi 1 Skill` a **Timed Out** log that means it hasn't received the expected message.
+
+
+
+ #### T3
+ 
+ Edit line 184 of `docker-compose.yml` with:
+
+```yarpmanager-console --application $${UC3_DIR}/launch/applications/convince_bt_skills_T3.xml --exit --run --connect"```
+
+then run all as above, and once done you should see in the `Model Monitor Battery Level Skill` a **currently_false** log that means the behavior is not as expected.
+
+Instead once you drop the battery level you should see in the `Monitor Property 1` a **"verdict": "currently_false"** that means it has an inconsistency.
+
+
+ #### T4
+ 
+ Edit line 184 of `docker-compose.yml` with:
+
+```yarpmanager-console --application $${UC3_DIR}/launch/applications/convince_bt_skills_T4.xml --exit --run --connect"```
+
+then run all as above, and once you drop the battery level you should see in the `Model Monitor Alarm Skill` a **currently_false** log that means it hasn't received the expected message (at the first tick).
+
+ #### T5
+ 
+ Edit line 184 of `docker-compose.yml` with:
+
+```yarpmanager-console --application $${UC3_DIR}/launch/applications/convince_bt_skills_T5.xml --exit --run --connect"```
+
+then run all as above, and once you drop the battery level you should see in the `Model Monitor Battery Level Skill` a **currently_false** log that means the behavior is not as expected and `Monitor Property 2` a **"verdict": "currently_false"** that means it has an inconsistency.
+
+
+
+ #### T6
+ 
+ Edit line 184 of `docker-compose.yml` with:
+
+```yarpmanager-console --application $${UC3_DIR}/launch/applications/convince_bt_skills_T6.xml --exit --run --connect"```
+
+then run all as above, and once done you should see in the `Model Monitor Is Poi Done 1 Skill` a **currently_false** log that means the behavior is not as expected.
+
+
 
 ## Maintainer
 
