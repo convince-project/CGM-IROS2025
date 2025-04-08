@@ -20,6 +20,7 @@
 
  then 
  ```
+ git clone https://github.com/convince-project/CGM-IROS2025.git
  cd laboratory-tour/docker
  docker compose pull
  sudo xhost +
