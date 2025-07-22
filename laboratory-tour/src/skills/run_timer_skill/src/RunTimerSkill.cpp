@@ -193,7 +193,7 @@ void RunTimerSkill::tick( [[maybe_unused]] const std::shared_ptr<bt_interfaces_d
     m_stateMachine.submitEvent("CMD_TICK");
    
     while(m_tickResult.load()== Status::undefined) {
-        std::this_thread::sleep_for (std::chrono::milliseconds(1));
+        //std::this_thread::sleep_for (std::chrono::milliseconds(1));
     }
     switch(m_tickResult.load()) 
     {
