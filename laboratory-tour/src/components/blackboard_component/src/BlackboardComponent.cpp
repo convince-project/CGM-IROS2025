@@ -58,7 +58,7 @@ void BlackboardComponent::GetInt( const std::shared_ptr<blackboard_interfaces_du
     } else {
         if (!m_intBlacboard.contains(field_name)) {
             response->is_ok = false;
-            response->error_msg = "field not found";
+            // response->error_msg = "field not found";
             // std::cout << "GetInt: " << "field not found" << std::endl;
         } else {
             std::scoped_lock<std::mutex> lock(m_mutexInt);
@@ -82,7 +82,7 @@ void BlackboardComponent::SetInt( const std::shared_ptr<blackboard_interfaces_du
     } else {
         if (!m_intBlacboard.contains(field_name)) {
             response->is_ok = false;
-            response->error_msg = "field not found";
+            // response->error_msg = "field not found";
             // std::cout << "GetInt: " << "field not found" << std::endl;
         } else {
             std::scoped_lock<std::mutex> lock(m_mutexInt);
