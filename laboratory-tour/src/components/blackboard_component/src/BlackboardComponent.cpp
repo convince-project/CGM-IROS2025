@@ -49,21 +49,21 @@ void BlackboardComponent::spin()
 void BlackboardComponent::GetInt( const std::shared_ptr<blackboard_interfaces_dummy::srv::GetIntBlackboard::Request> request,
              std::shared_ptr<blackboard_interfaces_dummy::srv::GetIntBlackboard::Response>      response) 
 {
-    std::lock_guard<std::mutex> lock(m_mutexInt);
     std::string field_name = "PoiDone" + std::to_string(request->field_name);
-    std::cout << "GetInt Request: " << request->field_name << "translation " << field_name << std::endl; 
+    // std::cout << "GetInt Request: " << request->field_name << "translation " << field_name << std::endl; 
     if (field_name == "PoiDone") {
         response->is_ok = false;
         // response->error_msg = "missing required field name";
-        std::cout << "GetInt: " << "missing required field name" << std::endl;
+        // std::cout << "GetInt: " << "missing required field name" << std::endl;
     } else {
         if (!m_intBlacboard.contains(field_name)) {
             response->is_ok = false;
-            // response->error_msg = "field not found";
-            std::cout << "GetInt: " << "field not found" << std::endl;
+            response->error_msg = "field not found";
+            // std::cout << "GetInt: " << "field not found" << std::endl;
         } else {
+            std::scoped_lock<std::mutex> lock(m_mutexInt);
             response->value = m_intBlacboard.find(field_name)->second; 
-            std::cout << "GetInt: " << field_name << " " << response->value << std::endl; 
+            // std::cout << "GetInt: " << field_name << " " << response->value << std::endl; 
             response->is_ok = true;
         }
     }
@@ -73,21 +73,23 @@ void BlackboardComponent::GetInt( const std::shared_ptr<blackboard_interfaces_du
 void BlackboardComponent::SetInt( const std::shared_ptr<blackboard_interfaces_dummy::srv::SetIntBlackboard::Request> request,
              std::shared_ptr<blackboard_interfaces_dummy::srv::SetIntBlackboard::Response>      response) 
 {
-    std::lock_guard<std::mutex> lock(m_mutexInt);
+
     std::string field_name = "PoiDone" + std::to_string(request->field_name);
-    std::cout << " SetInt Request: " << request->field_name << " translation " << field_name << std::endl; 
+
     if (field_name == "PoiDone") {
         response->is_ok = false;
         // response->error_msg = "missing required field name";
-        std::cout << "SetInt: " << "missing required field name" << std::endl;
     } else {
-        if (m_intBlacboard.contains(field_name)) {
-            // response->error_msg = "field already present, overwriting";
-            std::cout << "SetInt: " << "field already present, overwriting" << std::endl;
-        } 
-        m_intBlacboard.insert_or_assign(field_name, request->value); 
-        std::cout << "SetInt: " << field_name << " " << request->value << std::endl; 
-        response->is_ok = true;
+        if (!m_intBlacboard.contains(field_name)) {
+            response->is_ok = false;
+            response->error_msg = "field not found";
+            // std::cout << "GetInt: " << "field not found" << std::endl;
+        } else {
+            std::scoped_lock<std::mutex> lock(m_mutexInt);
+            m_intBlacboard.insert_or_assign(field_name, request->value); 
+            // std::cout << "SetInt: " << field_name << " " << request->value << std::endl; 
+            response->is_ok = true;
+        }
     }
     response->is_ok = true;
 
