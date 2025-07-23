@@ -1,0 +1,12 @@
+<application>
+    <name>convince_bt</name>
+
+    <module>
+        <name>ros2</name>
+        <parameters>run bt_executable bt_executable /src/behavior_tree/BT/Policy.xml</parameters>
+        <workdir>/home/user1/UC3/laboratory-tour/</workdir>
+        <node>bt</node>
+    </module>
+
+
+</application>

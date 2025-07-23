@@ -1,9 +1,9 @@
 <application>
-    <name>convince_bt_skills_T4</name>
+    <name>convince_bt_skills</name>
 
     <module>
         <name>ros2</name>
-        <parameters>run alarm_skill_monitored_fault1 alarm_skill_monitored_fault1</parameters>
+        <parameters>run alarm_skill alarm_skill</parameters>
         <workdir />
         <node>bt</node>
     </module>
@@ -38,7 +38,7 @@
 
     <module>
         <name>ros2</name>
-        <parameters>run is_poi_done1_skill_monitored is_poi_done1_skill_monitored</parameters>
+        <parameters>run is_poi_done1_skill is_poi_done1_skill</parameters>
         <workdir />
         <node>bt</node>
     </module>
@@ -52,7 +52,7 @@
 
     <module>
         <name>ros2</name>
-        <parameters>run set_poi1_skill_monitored set_poi1_skill_monitored</parameters>
+        <parameters>run set_poi1_skill set_poi1_skill</parameters>
         <workdir />
         <node>bt</node>
     </module>
