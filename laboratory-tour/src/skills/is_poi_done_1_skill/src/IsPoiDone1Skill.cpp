@@ -5,7 +5,7 @@
 #include <QTime>
 #include <iostream>
 #include <QStateMachine>
-
+#include <chrono>         // std::chrono::seconds
 #include <type_traits>
 
 template<typename T>
@@ -69,6 +69,7 @@ bool IsPoiDone1Skill::start(int argc, char*argv[])
 
     
     m_stateMachine.connectToEvent("BlackboardComponent.GetInt.Call", [this]([[maybe_unused]]const QScxmlEvent & event){
+        auto time_start = std::chrono::high_resolution_clock::now();
         std::shared_ptr<rclcpp::Node> nodeGetInt = rclcpp::Node::make_shared(m_name + "SkillNodeGetInt");
         std::shared_ptr<rclcpp::Client<blackboard_interfaces_dummy::srv::GetIntBlackboard>> clientGetInt = nodeGetInt->create_client<blackboard_interfaces_dummy::srv::GetIntBlackboard>("/BlackboardComponent/GetInt");
         auto request = std::make_shared<blackboard_interfaces_dummy::srv::GetIntBlackboard::Request>();
@@ -77,6 +78,10 @@ bool IsPoiDone1Skill::start(int argc, char*argv[])
         request->field_name = convert<decltype(request->field_name)>(eventParams["field_name"].toString().toStdString());
         bool wait_succeded{true};
         int retries = 0;
+        auto time_end = std::chrono::high_resolution_clock::now();
+        auto duration = std::chrono::duration_cast<std::chrono::microseconds>(time_end - time_start);
+        RCLCPP_INFO(m_node->get_logger(), "IsPoiDone1Skill::BlackboardComponent.GetInt.Call duration: %ld microseconds", duration.count());
+        time_start = std::chrono::high_resolution_clock::now();
         while (!clientGetInt->wait_for_service(std::chrono::seconds(1))) {
             if (!rclcpp::ok()) {
                 RCLCPP_ERROR(rclcpp::get_logger("rclcpp"), "Interrupted while waiting for the service 'GetInt'. Exiting.");
@@ -90,7 +95,11 @@ bool IsPoiDone1Skill::start(int argc, char*argv[])
                break;
             }
         }
-        if (wait_succeded) {                                                                   
+        time_end = std::chrono::high_resolution_clock::now();
+        duration = std::chrono::duration_cast<std::chrono::microseconds>(time_end - time_start);
+        RCLCPP_INFO(m_node->get_logger(), "IsPoiDone1Skill::BlackboardComponent.GetInt.Call wait_for_service duration: %ld microseconds", duration.count());
+        if (wait_succeded) {          
+            time_start = std::chrono::high_resolution_clock::now();
             auto result = clientGetInt->async_send_request(request);
             const std::chrono::seconds timeout_duration(SERVICE_TIMEOUT);
             auto futureResult = rclcpp::spin_until_future_complete(nodeGetInt, result, timeout_duration);
@@ -103,7 +112,10 @@ bool IsPoiDone1Skill::start(int argc, char*argv[])
                    data.insert("value", response->value);
                    m_stateMachine.submitEvent("BlackboardComponent.GetInt.Return", data);
                    RCLCPP_INFO(rclcpp::get_logger("rclcpp"), "BlackboardComponent.GetInt.Return");
-                   return;
+                    time_end = std::chrono::high_resolution_clock::now();
+                    duration = std::chrono::duration_cast<std::chrono::microseconds>(time_end - time_start);
+                    RCLCPP_INFO(m_node->get_logger(), "IsPoiDone1Skill::BlackboardComponent.GetInt.Call duration: %ld microseconds", duration.count());
+                    return;
                }
            }
            else if(futureResult == rclcpp::FutureReturnCode::TIMEOUT){
