@@ -80,8 +80,8 @@ bool IsPoiDone1Skill::start(int argc, char*argv[])
         request->field_name = convert<decltype(request->field_name)>(eventParams["field_name"].toString().toStdString());
         bool wait_succeded{true};
         int retries = 0;
-        auto time_end = std::chrono::high_resolution_clock::now();
-        auto duration = std::chrono::duration_cast<std::chrono::microseconds>(time_end - time_start);
+        time_end = std::chrono::high_resolution_clock::now();
+        duration = std::chrono::duration_cast<std::chrono::microseconds>(time_end - time_start);
         RCLCPP_INFO(m_node->get_logger(), "IsPoiDone1Skill::BlackboardComponent.GetInt.Call second part duration: %ld microseconds", duration.count());
         time_start = std::chrono::high_resolution_clock::now();
         while (!clientGetInt->wait_for_service(std::chrono::seconds(1))) {
