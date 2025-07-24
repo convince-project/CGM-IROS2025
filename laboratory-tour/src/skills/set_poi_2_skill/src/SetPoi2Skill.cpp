@@ -72,7 +72,7 @@ bool SetPoi2Skill::start(int argc, char*argv[])
 
     m_stateMachine.connectToEvent("SchedulerComponent.SetPoi.Call", [this]([[maybe_unused]]const QScxmlEvent & event){
         auto request = std::make_shared<scheduler_interfaces_dummy::srv::SetPoi::Request>();
-        request->poi_number = "2";
+        request->poi_number = 2;
         bool wait_succeded{true};
         int retries = 0;
         while (!clientSetPoi->wait_for_service(std::chrono::seconds(1))) {
