@@ -62,8 +62,8 @@ void SchedulerComponent::spin()
 void SchedulerComponent::SetPoi([[maybe_unused]] const std::shared_ptr<scheduler_interfaces_dummy::srv::SetPoi::Request> request,
              std::shared_ptr<scheduler_interfaces_dummy::srv::SetPoi::Response>      response)
 {
-    // RCLCPP_INFO(m_node->get_logger(), "SchedulerComponent::SetPoi %d",  request->poi_number);
-    m_currentPoi = (request->poi_number) % 2;//m_tourStorage->GetTour().getPoIsList().size();
+    RCLCPP_INFO(m_node->get_logger(), "SchedulerComponent::SetPoi %d",  request->poi_number);
+    m_currentPoi = (request->poi_number) % m_tourStorage->GetTour().getPoIsList().size();
     response->is_ok = true;
     // std::string text = "Update Poi to: " + std::to_string(m_currentPoi) + " - " + m_tourStorage->GetTour().getPoIsList()[m_currentPoi];
 }
@@ -74,7 +74,7 @@ void SchedulerComponent::GetCurrentPoi([[maybe_unused]] const std::shared_ptr<sc
 {
     // response->poi_name = m_tourStorage->GetTour().getPoIsList()[m_currentPoi];
     response->poi_number = m_currentPoi;
-    // RCLCPP_INFO(m_node->get_logger(), "SchedulerComponent::GetCurrentPoi number: %d", response->poi_number);
+    RCLCPP_INFO(m_node->get_logger(), "SchedulerComponent::GetCurrentPoi number: %d", response->poi_number);
     response->is_ok = true;
 }
 
