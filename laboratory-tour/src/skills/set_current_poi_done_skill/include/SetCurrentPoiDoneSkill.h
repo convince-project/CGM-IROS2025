@@ -47,10 +47,9 @@ private:
 	SetCurrentPoiDoneSkillAction m_stateMachine;
 	std::atomic<Status> m_tickResult{Status::undefined};
 	rclcpp::Service<bt_interfaces_dummy::srv::TickAction>::SharedPtr m_tickService;
-	
-	
-	
-	
-	
+	std::shared_ptr<rclcpp::Node> nodeSetInt;
+	std::shared_ptr<rclcpp::Client<blackboard_interfaces_dummy::srv::SetIntBlackboard>> clientSetInt;
+	std::shared_ptr<rclcpp::Node> nodeGetCurrentPoi;
+	std::shared_ptr<rclcpp::Client<scheduler_interfaces_dummy::srv::GetCurrentPoi>> clientGetCurrentPoi;
 };
 

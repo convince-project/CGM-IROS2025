@@ -64,16 +64,14 @@ bool SetCurrentPoiDoneSkill::start(int argc, char*argv[])
                                                                            	std::placeholders::_1,
                                                                            	std::placeholders::_2));
     
-
-    
+    nodeSetInt = rclcpp::Node::make_shared(m_name + "SkillNodeSetInt");
+    clientSetInt = nodeSetInt->create_client<blackboard_interfaces_dummy::srv::SetIntBlackboard>("/BlackboardComponent/SetInt");
+    nodeGetCurrentPoi = rclcpp::Node::make_shared(m_name + "SkillNodeGetCurrentPoi");
+    clientGetCurrentPoi = nodeGetCurrentPoi->create_client<scheduler_interfaces_dummy::srv::GetCurrentPoi>("/SchedulerComponent/GetCurrentPoi");
 
     
     m_stateMachine.connectToEvent("SchedulerComponent.GetCurrentPoi.Call", [this]([[maybe_unused]]const QScxmlEvent & event){
-        std::shared_ptr<rclcpp::Node> nodeGetCurrentPoi = rclcpp::Node::make_shared(m_name + "SkillNodeGetCurrentPoi");
-        std::shared_ptr<rclcpp::Client<scheduler_interfaces_dummy::srv::GetCurrentPoi>> clientGetCurrentPoi = nodeGetCurrentPoi->create_client<scheduler_interfaces_dummy::srv::GetCurrentPoi>("/SchedulerComponent/GetCurrentPoi");
-        auto request = std::make_shared<scheduler_interfaces_dummy::srv::GetCurrentPoi::Request>();
-        auto eventParams = event.data().toMap();
-        
+        auto request = std::make_shared<scheduler_interfaces_dummy::srv::GetCurrentPoi::Request>();        
         bool wait_succeded{true};
         int retries = 0;
         while (!clientGetCurrentPoi->wait_for_service(std::chrono::seconds(1))) {
@@ -115,13 +113,13 @@ bool SetCurrentPoiDoneSkill::start(int argc, char*argv[])
        m_stateMachine.submitEvent("SchedulerComponent.GetCurrentPoi.Return", data);
        RCLCPP_INFO(rclcpp::get_logger("rclcpp"), "SchedulerComponent.GetCurrentPoi.Return");
     });
+
+    
     m_stateMachine.connectToEvent("BlackboardComponent.SetInt.Call", [this]([[maybe_unused]]const QScxmlEvent & event){
-        std::shared_ptr<rclcpp::Node> nodeSetInt = rclcpp::Node::make_shared(m_name + "SkillNodeSetInt");
-        std::shared_ptr<rclcpp::Client<blackboard_interfaces_dummy::srv::SetIntBlackboard>> clientSetInt = nodeSetInt->create_client<blackboard_interfaces_dummy::srv::SetIntBlackboard>("/BlackboardComponent/SetInt");
         auto request = std::make_shared<blackboard_interfaces_dummy::srv::SetIntBlackboard::Request>();
         auto eventParams = event.data().toMap();
         
-        request->value = convert<decltype(request->value)>(eventParams["value"].toString().toStdString());
+        request->value = 1;
         request->field_name = convert<decltype(request->field_name)>(eventParams["field_name"].toString().toStdString());
         bool wait_succeded{true};
         int retries = 0;
