@@ -74,13 +74,15 @@ bool IsPoiDone1Skill::start(int argc, char*argv[])
         std::shared_ptr<rclcpp::Client<blackboard_interfaces_dummy::srv::GetIntBlackboard>> clientGetInt = nodeGetInt->create_client<blackboard_interfaces_dummy::srv::GetIntBlackboard>("/BlackboardComponent/GetInt");
         auto request = std::make_shared<blackboard_interfaces_dummy::srv::GetIntBlackboard::Request>();
         auto eventParams = event.data().toMap();
-        
+        auto time_end = std::chrono::high_resolution_clock::now();
+        auto duration = std::chrono::duration_cast<std::chrono::microseconds>(time_end - time_start);
+        RCLCPP_INFO(m_node->get_logger(), "IsPoiDone1Skill::BlackboardComponent.GetInt.Call first part duration: %ld microseconds", duration.count());
         request->field_name = convert<decltype(request->field_name)>(eventParams["field_name"].toString().toStdString());
         bool wait_succeded{true};
         int retries = 0;
         auto time_end = std::chrono::high_resolution_clock::now();
         auto duration = std::chrono::duration_cast<std::chrono::microseconds>(time_end - time_start);
-        RCLCPP_INFO(m_node->get_logger(), "IsPoiDone1Skill::BlackboardComponent.GetInt.Call duration: %ld microseconds", duration.count());
+        RCLCPP_INFO(m_node->get_logger(), "IsPoiDone1Skill::BlackboardComponent.GetInt.Call second part duration: %ld microseconds", duration.count());
         time_start = std::chrono::high_resolution_clock::now();
         while (!clientGetInt->wait_for_service(std::chrono::seconds(1))) {
             if (!rclcpp::ok()) {
@@ -114,7 +116,7 @@ bool IsPoiDone1Skill::start(int argc, char*argv[])
                    RCLCPP_INFO(rclcpp::get_logger("rclcpp"), "BlackboardComponent.GetInt.Return");
                     time_end = std::chrono::high_resolution_clock::now();
                     duration = std::chrono::duration_cast<std::chrono::microseconds>(time_end - time_start);
-                    RCLCPP_INFO(m_node->get_logger(), "IsPoiDone1Skill::BlackboardComponent.GetInt.Call duration: %ld microseconds", duration.count());
+                    RCLCPP_INFO(m_node->get_logger(), "IsPoiDone1Skill::BlackboardComponent.GetInt.Call at end duration: %ld microseconds", duration.count());
                     return;
                }
            }
