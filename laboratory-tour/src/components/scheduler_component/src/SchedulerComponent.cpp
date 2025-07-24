@@ -63,7 +63,7 @@ void SchedulerComponent::SetPoi([[maybe_unused]] const std::shared_ptr<scheduler
              std::shared_ptr<scheduler_interfaces_dummy::srv::SetPoi::Response>      response)
 {
     RCLCPP_INFO(m_node->get_logger(), "SchedulerComponent::SetPoi %d",  request->poi_number);
-    m_currentPoi = (request->poi_number) % m_tourStorage->GetTour().getPoIsList().size();
+    m_currentPoi = (((request->poi_number) - 1) % m_tourStorage->GetTour().getPoIsList().size()) + 1;
     response->is_ok = true;
     // std::string text = "Update Poi to: " + std::to_string(m_currentPoi) + " - " + m_tourStorage->GetTour().getPoIsList()[m_currentPoi];
 }
