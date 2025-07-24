@@ -82,9 +82,12 @@ m_send_goal_options.goal_response_callback = std::bind(&GoToPoiActionSkill::goal
 m_send_goal_options.feedback_callback =   std::bind(&GoToPoiActionSkill::feedback_callback, this, std::placeholders::_1, std::placeholders::_2);
 m_send_goal_options.result_callback =  std::bind(&GoToPoiActionSkill::result_callback, this, std::placeholders::_1);
 
+nodeGetCurrentPoi = rclcpp::Node::make_shared(m_name + "SkillNodeGetCurrentPoi");
+clientGetCurrentPoi = nodeGetCurrentPoi->create_client<scheduler_interfaces_dummy::srv::GetCurrentPoi>("/SchedulerComponent/GetCurrentPoi");
+nodeSetInt = rclcpp::Node::make_shared(m_name + "SkillNodeSetInt");
+clientSetInt = nodeSetInt->create_client<blackboard_interfaces_dummy::srv::SetIntBlackboard>("/BlackboardComponent/SetInt");
+
 m_stateMachine.connectToEvent("SchedulerComponent.GetCurrentPoi.Call", [this]([[maybe_unused]]const QScxmlEvent & event){
-        std::shared_ptr<rclcpp::Node> nodeGetCurrentPoi = rclcpp::Node::make_shared(m_name + "SkillNodeGetCurrentPoi");
-        std::shared_ptr<rclcpp::Client<scheduler_interfaces_dummy::srv::GetCurrentPoi>> clientGetCurrentPoi = nodeGetCurrentPoi->create_client<scheduler_interfaces_dummy::srv::GetCurrentPoi>("/SchedulerComponent/GetCurrentPoi");
         auto request = std::make_shared<scheduler_interfaces_dummy::srv::GetCurrentPoi::Request>();
         bool wait_succeded{true};
         while (!clientGetCurrentPoi->wait_for_service(std::chrono::seconds(1))) {
@@ -173,8 +176,6 @@ m_stateMachine.connectToEvent("NavigationComponent.GoToPoi.Feedback", [this]([[m
 
 
   m_stateMachine.connectToEvent("BlackboardComponent.SetInt.Call", [this]([[maybe_unused]]const QScxmlEvent & event){
-      std::shared_ptr<rclcpp::Node> nodeSetInt = rclcpp::Node::make_shared(m_name + "SkillNodeSetInt");
-      std::shared_ptr<rclcpp::Client<blackboard_interfaces_dummy::srv::SetIntBlackboard>> clientSetInt = nodeSetInt->create_client<blackboard_interfaces_dummy::srv::SetIntBlackboard>("/BlackboardComponent/SetInt");
       auto request = std::make_shared<blackboard_interfaces_dummy::srv::SetIntBlackboard::Request>();
       auto eventParams = event.data().toMap();
       request->field_name = convert<decltype(request->field_name)>(eventParams["field_name"].toString().toStdString());

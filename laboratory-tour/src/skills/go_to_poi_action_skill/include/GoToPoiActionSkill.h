@@ -60,6 +60,10 @@ private:
 	std::shared_ptr<rclcpp::Node> m_nodeGoToPoi;
 	rclcpp_action::Client<navigation_interfaces_dummy::action::GoToPoi>::SendGoalOptions m_send_goal_options;
 	rclcpp_action::Client<navigation_interfaces_dummy::action::GoToPoi>::SharedPtr m_actionClient;
+	std::shared_ptr<rclcpp::Node> nodeGetCurrentPoi;
+	std::shared_ptr<rclcpp::Client<scheduler_interfaces_dummy::srv::GetCurrentPoi>> clientGetCurrentPoi;
+	std::shared_ptr<rclcpp::Node> nodeSetInt;
+	std::shared_ptr<rclcpp::Client<blackboard_interfaces_dummy::srv::SetIntBlackboard>> clientSetInt;
 	void goal_response_callback(const  rclcpp_action::ClientGoalHandle<navigation_interfaces_dummy::action::GoToPoi>::SharedPtr & goal_handle);
 	// void send_goal(std::shared_ptr<rclcpp::Node> nodeGoToPoi, rclcpp_action::Client<navigation_interfaces_dummy::action::GoToPoi>::SharedPtr clientGoToPoi);
 	void send_goal(int poi_number);
@@ -67,4 +71,6 @@ private:
     	rclcpp_action::ClientGoalHandle<navigation_interfaces_dummy::action::GoToPoi>::SharedPtr,
     	const std::shared_ptr<const navigation_interfaces_dummy::action::GoToPoi::Feedback> feedback);
 	void result_callback(const  rclcpp_action::ClientGoalHandle<navigation_interfaces_dummy::action::GoToPoi>::WrappedResult & result);
+	
+
 };
