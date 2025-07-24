@@ -10,7 +10,7 @@
 #include <rclcpp/rclcpp.hpp>
 #include <blackboard_interfaces_dummy/srv/get_int_blackboard.hpp>
 #include <blackboard_interfaces_dummy/srv/set_int_blackboard.hpp>
-#include <map>
+#include <unordered_map>
 
 class BlackboardComponent
 {
@@ -33,6 +33,6 @@ private:
     std::mutex m_mutexDouble;
     std::mutex m_mutexInt;
     std::mutex m_mutexString;
-    std::map<std::string, int32_t> m_intBlacboard;
+    std::unordered_map<std::string, int32_t> m_intBlacboard;
 
 };
