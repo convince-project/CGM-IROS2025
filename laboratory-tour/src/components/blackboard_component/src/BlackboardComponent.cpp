@@ -70,7 +70,7 @@ void BlackboardComponent::SetInt( const std::shared_ptr<blackboard_interfaces_du
 
     std::string field_name = "PoiDone" + std::to_string(request->field_name);
 
-    if(request->field_name.empty())
+    if(request->field_name < 0)
     {
         response->is_ok = false;
     } else {
