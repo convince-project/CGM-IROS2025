@@ -46,7 +46,8 @@ private:
 	std::atomic<Status> m_tickResult{Status::undefined};
 	rclcpp::Service<bt_interfaces_dummy::srv::TickAction>::SharedPtr m_tickService;
 	
-	
+	std::shared_ptr<rclcpp::Node> nodeSetPoi;
+	std::shared_ptr<rclcpp::Client<scheduler_interfaces_dummy::srv::SetPoi>> clientSetPoi;
 	
 	
 	

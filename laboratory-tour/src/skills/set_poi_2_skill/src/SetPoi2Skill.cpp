@@ -67,14 +67,12 @@ bool SetPoi2Skill::start(int argc, char*argv[])
 
     
 
-    
+    nodeSetPoi = rclcpp::Node::make_shared(m_name + "SkillNodeSetPoi");
+    clientSetPoi = nodeSetPoi->create_client<scheduler_interfaces_dummy::srv::SetPoi>("/SchedulerComponent/SetPoi");
+
     m_stateMachine.connectToEvent("SchedulerComponent.SetPoi.Call", [this]([[maybe_unused]]const QScxmlEvent & event){
-        std::shared_ptr<rclcpp::Node> nodeSetPoi = rclcpp::Node::make_shared(m_name + "SkillNodeSetPoi");
-        std::shared_ptr<rclcpp::Client<scheduler_interfaces_dummy::srv::SetPoi>> clientSetPoi = nodeSetPoi->create_client<scheduler_interfaces_dummy::srv::SetPoi>("/SchedulerComponent/SetPoi");
         auto request = std::make_shared<scheduler_interfaces_dummy::srv::SetPoi::Request>();
-        auto eventParams = event.data().toMap();
-        
-        request->poi_number = convert<decltype(request->poi_number)>(eventParams["poi_number"].toString().toStdString());
+        request->poi_number = "2";
         bool wait_succeded{true};
         int retries = 0;
         while (!clientSetPoi->wait_for_service(std::chrono::seconds(1))) {
