@@ -45,7 +45,9 @@ private:
 	IsPoiDone1SkillCondition m_stateMachine;
 	std::atomic<Status> m_tickResult{Status::undefined};
 	rclcpp::Service<bt_interfaces_dummy::srv::TickCondition>::SharedPtr m_tickService;
-	
+    std::shared_ptr<rclcpp::Node> nodeGetInt;
+    std::shared_ptr<rclcpp::Client<blackboard_interfaces_dummy::srv::GetIntBlackboard>> clientGetInt;
+
 	
 	
 	
