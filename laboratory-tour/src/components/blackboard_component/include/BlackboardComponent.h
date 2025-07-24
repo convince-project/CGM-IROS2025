@@ -33,6 +33,6 @@ private:
     std::mutex m_mutexDouble;
     std::mutex m_mutexInt;
     std::mutex m_mutexString;
-    std::unordered_map<std::string, int32_t> m_intBlacboard;
+    std::unordered_map<std::string, int32_t> m_intBlacboard {1: 0, 2: 0};
 
 };
