@@ -86,7 +86,6 @@ bool IsPoiDone1Skill::start(int argc, char*argv[])
                break;
             }
         }
-        RCLCPP_INFO(m_node->get_logger(), "IsPoiDone1Skill::BlackboardComponent.GetInt.Call wait_for_service duration: %ld microseconds", duration.count());
         if (wait_succeded) {          
             auto result = clientGetInt->async_send_request(request);
             const std::chrono::seconds timeout_duration(SERVICE_TIMEOUT);
