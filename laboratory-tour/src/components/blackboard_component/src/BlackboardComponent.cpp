@@ -56,9 +56,11 @@ void BlackboardComponent::GetInt( const std::shared_ptr<blackboard_interfaces_du
     auto it = m_intBlacboard.find(field_name);
     if (it == m_intBlacboard.end()) {
         response->is_ok = false;
+        RCLCPP_ERROR(m_node->get_logger(), "Field %s not found in the blackboard.", field_name.c_str());
     } else {
         response->value = it->second;
         response->is_ok = true;
+        RCLCPP_INFO(m_node->get_logger(), "GetInt: %s %d", field_name.c_str(), it->second);
     }
     
 }
@@ -73,11 +75,13 @@ void BlackboardComponent::SetInt( const std::shared_ptr<blackboard_interfaces_du
     if(request->field_name < 0)
     {
         response->is_ok = false;
+        RCLCPP_ERROR(m_node->get_logger(), "Field name cannot be negative: %d", request->field_name);
     } else {
 
         std::scoped_lock<std::mutex> lock(m_mutexInt);
         m_intBlacboard.insert_or_assign(field_name, request->value); 
         // std::cout << "SetInt: " << field_name << " " << request->value << std::endl; 
+        RCLCPP_INFO(m_node->get_logger(), "SetInt: %s %d", field_name.c_str(), request->value);
         response->is_ok = true;
     }
     
