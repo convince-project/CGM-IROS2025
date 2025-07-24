@@ -53,8 +53,8 @@ void BlackboardComponent::GetInt( const std::shared_ptr<blackboard_interfaces_du
     // std::cout << "GetInt Request: " << request->field_name << "translation " << field_name << std::endl; 
 
     std::scoped_lock<std::mutex> lock(m_mutexInt);
-    auto it = m_intBlacboard.find(field_name);
-    if (it == m_intBlacboard.end()) {
+    auto it = m_intBlackboard.find(field_name);
+    if (it == m_intBlackboard.end()) {
         response->is_ok = false;
         RCLCPP_ERROR(m_node->get_logger(), "Field %s not found in the blackboard.", field_name.c_str());
     } else {
@@ -79,7 +79,7 @@ void BlackboardComponent::SetInt( const std::shared_ptr<blackboard_interfaces_du
     } else {
 
         std::scoped_lock<std::mutex> lock(m_mutexInt);
-        m_intBlacboard.insert_or_assign(field_name, request->value); 
+        m_intBlackboard.insert_or_assign(field_name, request->value); 
         // std::cout << "SetInt: " << field_name << " " << request->value << std::endl; 
         RCLCPP_INFO(m_node->get_logger(), "SetInt: %s %d", field_name.c_str(), request->value);
         response->is_ok = true;
