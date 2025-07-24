@@ -46,7 +46,8 @@ private:
 	AlarmSkillAction m_stateMachine;
 	std::atomic<Status> m_tickResult{Status::undefined};
 	rclcpp::Service<bt_interfaces_dummy::srv::TickAction>::SharedPtr m_tickService;
-	
+	std::shared_ptr<rclcpp::Node> nodeStartAlarm;
+	std::shared_ptr<rclcpp::Client<notify_user_interfaces_dummy::srv::StartAlarm>> clientStartAlarm;
 	
 	
 	

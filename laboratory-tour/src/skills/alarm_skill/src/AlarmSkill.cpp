@@ -67,17 +67,14 @@ bool AlarmSkill::start(int argc, char*argv[])
                                                                            	this,
                                                                            	std::placeholders::_1,
                                                                            	std::placeholders::_2));
-    
+    nodeStartAlarm = rclcpp::Node::make_shared(m_name + "SkillNodeStartAlarm");
+    clientStartAlarm = nodeStartAlarm->create_client<notify_user_interfaces_dummy::srv::StartAlarm>("/NotifyUserComponent/StartAlarm_mon");
 
     
 
     
     m_stateMachine.connectToEvent("NotifyUserComponent.StartAlarm.Call", [this]([[maybe_unused]]const QScxmlEvent & event){
-        std::shared_ptr<rclcpp::Node> nodeStartAlarm = rclcpp::Node::make_shared(m_name + "SkillNodeStartAlarm");
-        std::shared_ptr<rclcpp::Client<notify_user_interfaces_dummy::srv::StartAlarm>> clientStartAlarm = nodeStartAlarm->create_client<notify_user_interfaces_dummy::srv::StartAlarm>("/NotifyUserComponent/StartAlarm");
-        auto request = std::make_shared<notify_user_interfaces_dummy::srv::StartAlarm::Request>();
-        auto eventParams = event.data().toMap();
-        
+        auto request = std::make_shared<notify_user_interfaces_dummy::srv::StartAlarm::Request>();        
         bool wait_succeded{true};
         int retries = 0;
         while (!clientStartAlarm->wait_for_service(std::chrono::seconds(1))) {
