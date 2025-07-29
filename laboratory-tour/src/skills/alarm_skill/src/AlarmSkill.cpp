@@ -68,7 +68,7 @@ bool AlarmSkill::start(int argc, char*argv[])
                                                                            	std::placeholders::_1,
                                                                            	std::placeholders::_2));
     nodeStartAlarm = rclcpp::Node::make_shared(m_name + "SkillNodeStartAlarm");
-    clientStartAlarm = nodeStartAlarm->create_client<notify_user_interfaces_dummy::srv::StartAlarm>("/NotifyUserComponent/StartAlarm_mon");
+    clientStartAlarm = nodeStartAlarm->create_client<notify_user_interfaces_dummy::srv::StartAlarm>("/NotifyUserComponent/StartAlarm");
 
     
 
